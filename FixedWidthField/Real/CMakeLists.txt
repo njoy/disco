@@ -26,14 +26,13 @@ endif(NOT(EXISTS "${long_path}/src"))
 
 set(headers "")
 list(APPEND headers
+  "src/noDigits"
   "src/parseSign"
   "src/parseBase"
   "src/parseFraction"
   "src/parseExponent"
   "src/parseInfinity"
   "src/read"
-  "Mask"
-  "MaxExponent"
   "Pow"
   "Exponentiation"
   ${subdirs}

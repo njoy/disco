@@ -33,8 +33,6 @@ struct Engineering;
 
 #include "disco/FixedWidthField.hpp"
 #include "disco/FixedWidthField/noDigits.hpp"
-#include "disco/FixedWidthField/Real/Mask.hpp"
-#include "disco/FixedWidthField/Real/MaxExponent.hpp"
 #include "disco/FixedWidthField/Real/Pow.hpp"
 #include "disco/FixedWidthField/Real/Exponentiation.hpp"
 #include "disco/FixedWidthField/Real.hpp"
