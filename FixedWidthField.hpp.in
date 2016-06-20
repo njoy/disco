@@ -24,19 +24,15 @@ struct FixedWidthField {
   using TrustTag = typename utility::TypeSwitch
                             < Trusted, NotTrusted, trust >::type;
 
-  /* psuedo partial function specialization */
-  template< typename Iterator >
-  static void verifyWidth_( Iterator begin, Iterator end, Trusted ){} 
-
-  template< typename Iterator >
-  static void verifyWidth_( Iterator begin, Iterator end, NotTrusted ){
-    if (  w > std::distance( begin, end ) ){ throw std::exception(); }
-  }
-
   /* helper methods */
-  template< bool trust, typename Iterator >
-  static void verifyWidth( Iterator begin,Iterator end ){
-    verifyWidth_( begin, end, TrustTag< trust >() );
+  template< typename Iterator >
+  static void
+  verifyWidth_( Iterator, Iterator, Trusted ){} 
+
+  template< typename Iterator >
+  static void
+  verifyWidth_( Iterator begin, Iterator end, NotTrusted ){
+    if (  w > std::distance( begin, end ) ){ throw std::exception(); }
   }
   
   constexpr static bool

@@ -1,0 +1,41 @@
+#include <cstdint>
+#include <limits>
+
+#include "easylogging++.h"
+
+namespace disco {
+
+template< uint16_t w >
+struct FixedWidthField;
+
+template< uint16_t w, uint16_t m = std::numeric_limits<uint16_t>::max() >
+struct Integer;
+
+template< uint16_t w >
+struct Real;
+
+template< uint16_t w, uint16_t d >
+struct Decimal;
+
+template< uint16_t w, uint16_t d,
+          uint16_t e = std::numeric_limits<uint16_t>::max() >
+struct Exponential;
+
+template< uint16_t w, uint16_t d,
+          uint16_t e = std::numeric_limits<uint16_t>::max() >
+struct Scientific;
+
+template< uint16_t w, uint16_t d,
+          uint16_t e = std::numeric_limits<uint16_t>::max() >
+struct Engineering;
+
+}
+
+#include "disco/FixedWidthField.hpp"
+#include "disco/FixedWidthField/noDigits.hpp"
+#include "disco/FixedWidthField/Real/Mask.hpp"
+#include "disco/FixedWidthField/Real/MaxExponent.hpp"
+#include "disco/FixedWidthField/Real/Pow.hpp"
+#include "disco/FixedWidthField/Real/Exponentiation.hpp"
+#include "disco/FixedWidthField/Real.hpp"
+#include "disco/FixedWidthField/Real/Scientific.hpp"

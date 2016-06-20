@@ -1,0 +1,51 @@
+template< typename Iterator >
+static void
+writeInfinity( Iterator& it, bool isNegative, typename Real::Full ){
+  auto remainingBlanks = w - 8 - isNegative;
+  while ( --remainingBlanks > 0 ){
+    *it++ = ' ';
+  }
+  if ( isNegative ){
+    *it++ = '-'; 
+  } else if ( remainingBlanks == 0 ){
+    *it++ = ' ';
+  }
+  *it++ = 'I';
+  *it++ = 'n';
+  *it++ = 'f';
+  *it++ = 'i';
+  *it++ = 'n';
+  *it++ = 'i';
+  *it++ = 't';
+  *it++ = 'y';
+}
+
+template< typename Iterator >
+static void
+writeInfinity( Iterator& it, bool isNegative, typename Real::Partial ){
+  auto remainingBlanks = int(w) - 3 - isNegative;
+  if ( remainingBlanks < 0 ){
+    writeInvalid( it );
+    return;
+  }
+  while ( --remainingBlanks > 0 ){
+    *it++ = ' ';
+  }
+  if ( isNegative ){
+    *it++ = '-'; 
+  } else if ( remainingBlanks == 0 ){
+    *it++ = ' ';
+  }
+  *it++ = 'I';
+  *it++ = 'n';
+  *it++ = 'f';
+}
+
+template< typename Iterator >
+static void
+writeInfinity
+( Iterator& it, bool isNegative, typename Real::PartialNegative ){
+  isNegative ?
+    writeInfinity( it, isNegative, typename Real::Partial() ) :
+    writeInfinity( it, isNegative, typename Real::Full() );
+}

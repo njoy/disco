@@ -1,0 +1,11 @@
+  template< typename Iterator >
+  static uint16_t
+  skipPad( Iterator& it ){
+    constexpr uint16_t endPosition = w - 1;
+    uint16_t position = 0;
+    while( FixedWidthField::isSpace( *it ) ){
+      ++it; ++position;
+      if ( position == endPosition ){ break; } 
+    }
+    return position;
+  }

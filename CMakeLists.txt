@@ -23,6 +23,12 @@ list(APPEND ${projectName}_src) # (empty list)
 list(APPEND ${projectName}_src_headers) # (empty list)
 list(APPEND ${projectName}_bin_headers) # (empty list)
 
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/disco.hpp.in"
+  "${HEADER_DIR}/disco.hpp"
+  COPYONLY
+  )
+
 set(headers "")
 list(APPEND headers
   "FixedWidthField"

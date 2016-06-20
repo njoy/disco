@@ -1,0 +1,51 @@
+namespace disco {
+
+template< typename Representation >
+constexpr unsigned char signBit = 0;
+
+template<>
+constexpr unsigned char signBit< float > = 31u;
+
+template<>
+constexpr unsigned char signBit< double > = 63u;
+
+template< typename Representation >
+constexpr unsigned char mantissaWidth = 0u;
+
+template< >
+constexpr unsigned char mantissaWidth< float > = 23u;
+
+template< >
+constexpr unsigned char mantissaWidth< double > = 51u;
+
+template< typename Representation >
+constexpr int16_t exponentOffset = 0u;
+
+template< >
+constexpr int16_t exponentOffset< float > = 127;
+
+template< >
+constexpr int16_t exponentOffset< double > = 1023;
+
+template< typename Representation >
+struct mask;
+
+template<>
+struct mask< float > { using type = uint32_t; };
+
+template<>
+struct mask< double > { using type = uint64_t; };
+  
+template< typename Representation >
+constexpr typename mask< Representation >::type signMask =
+  1ull << signBit< Representation >;
+
+template< typename Representation >
+constexpr typename mask< Representation >::type mantissaMask =
+  ( 1ull << ( mantissaWidth< Representation > + 1 ) ) - 1u;
+
+template< typename Representation >
+constexpr typename mask< Representation >::type exponentMask =
+  ~( signMask< Representation > | mantissaMask< Representation > );
+
+}

@@ -1,0 +1,24 @@
+template< typename Iterator >
+static bool
+parseInfinity( Iterator& it, uint16_t& position ){
+  const auto remainingWidth = int(w) - position;
+  switch ( remainingWidth ){
+  case 3:
+    position += 3;
+    return ( toupper( *it++ ) == 'I' )
+           && ( toupper( *it++ ) == 'N' )
+           && ( toupper( *it++ ) == 'F' );
+  case 8:
+    position += 8;
+    return ( toupper( *it++ ) == 'I' )
+           && ( toupper( *it++ ) == 'N' )
+           && ( toupper( *it++ ) == 'F' )
+           && ( toupper( *it++ ) == 'I' )
+           && ( toupper( *it++ ) == 'N' )
+           && ( toupper( *it++ ) == 'I' )
+           && ( toupper( *it++ ) == 'T' )
+           && ( toupper( *it++ ) == 'Y' );
+  default:
+    return false;
+  }
+}

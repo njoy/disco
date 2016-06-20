@@ -1,0 +1,38 @@
+namespace disco {
+
+template< typename Representation, int N, int... Rest >
+struct Exponentation {
+  static constexpr auto& value =
+    Exponentation< Representation, N - 1, N, Rest... >::value;
+  
+  static Representation
+  cache( int power ){
+    return Exponentation< Representation, N - 1, N, Rest... >::cache( power );
+  }
+};
+
+template< typename Representation, int... Rest >
+struct Exponentation< Representation, 0, Rest... > {
+  static constexpr int offset = 1 + sizeof...(Rest) / 2;
+  
+  static constexpr Representation
+  value[] = { disco::pow( Representation(10), -offset ), disco::pow( Representation(10), Rest - offset)... };
+
+  static Representation
+  cache( int power ){
+    return value[power + offset];
+  }
+};
+
+template< typename Representation, int... Rest >
+constexpr Representation Exponentation< Representation, 0, Rest... >::value[];
+
+template< typename Representation >
+using realExponentiation = Exponentation< Representation, 615 >;
+
+template< typename Representation >
+using integerExponentiation =
+  Exponentation< Representation,
+                 int(noDigits( std::numeric_limits< Representation >::max()) ) >;
+
+}
