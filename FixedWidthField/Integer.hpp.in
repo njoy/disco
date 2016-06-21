@@ -1,0 +1,46 @@
+namespace disco {
+
+template< uint16_t w, uint16_t m >
+struct Integer : public FixedWidthField< w >{
+  
+  using FixedWidthField = FixedWidthField< w >;
+
+  template< bool trust >
+  using TrustTag = typename FixedWidthField:: template TrustTag< trust >;
+  
+  struct Signed{};
+  struct Unsigned{};
+
+  struct WithPadding{};
+  struct WithoutPadding{};
+
+  using ZeroPaddingPolicy =
+    typename utility::TypeSwitch
+             < WithoutPadding, WithPadding,
+               m == std::numeric_limits<uint16_t>::max() >::type;
+  
+  /* methods */
+#include "disco/FixedWidthField/Integer/src/read.hpp"
+
+  template< typename Representation, typename Iterator >
+  static void
+  write( Representation integer, Iterator& it ){
+    write( integer, it, ZeroPaddingPolicy() );
+  }
+  
+#include "disco/FixedWidthField/Integer/src/write.hpp"
+
+  /* helpers */
+  static long long
+  parseInteger( char* begin, char*& end, Signed ){
+    return strtoll( begin, &end, 10);
+  }
+
+  static unsigned long long
+  parseInteger( char* begin, char*& end, Unsigned ){
+    return strtoull( begin, &end, 10);
+  }
+  
+};
+
+}

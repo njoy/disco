@@ -1,14 +1,11 @@
 if(${verbose_traversal})
-  message(STATUS "Entered FixedWidthField directory")
+  message(STATUS "Entered Integer directory")
 endif(${verbose_traversal})
 
-set(long_path "${disco_HEADER_DIR}/FixedWidthField/")
+set(long_path "${disco_HEADER_DIR}/FixedWidthField/Integer")
 
 set(header_only_subdirs "")
-list(APPEND header_only_subdirs
-  "Real"
-  "Integer"
-  )
+list(APPEND header_only_subdirs)
 
 set(subdirs "")
 list(APPEND subdirs
@@ -27,8 +24,8 @@ endif(NOT(EXISTS "${long_path}/src"))
 
 set(headers "")
 list(APPEND headers
-  "noDigits"
-  "src/skipPad"
+  "src/read"
+  "src/write"
   ${subdirs}
   )
 
@@ -44,11 +41,11 @@ foreach (subdir ${subdirs})
   add_subdirectory( ${subdir} )
 endforeach (subdir)
 
-# if(${local_testing})
-#   list(APPEND testLabels FixedWidth)
-#   add_subdirectory( "${CMAKE_CURRENT_SOURCE_DIR}/test" )
-# endif(${local_testing})
+if(${local_testing})
+  list(APPEND testLabels Integer)
+  add_subdirectory( "${CMAKE_CURRENT_SOURCE_DIR}/test" )
+endif(${local_testing})
 
 if(${verbose_traversal})
-  message(STATUS "Exiting FixedWidthField directory")
+  message(STATUS "Exiting Integer directory")
 endif(${verbose_traversal})

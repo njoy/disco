@@ -1,0 +1,34 @@
+template< typename Representation, typename Iterator >
+static void
+write( Representation integer, Iterator& it, WithoutPadding ){
+  const auto noDigits =
+    Real< 0 >::noDigits( uint64_t( std::abs(integer) ) ) + (integer < 0);
+  if ( noDigits > w ){ Scientific< w, 0 >::writeInvalid( it ); return; }
+  std::array< char, w+1  > buffer;
+  int consumedCharacters = snprintf( &buffer[0], w+1, "%*i", w, integer);
+  if (consumedCharacters != w){ throw std::exception(); }
+  auto begin = buffer.begin();
+  auto end = begin + w;
+  while ( begin != end ) { *it++ = *begin++; }
+}
+
+template< typename Representation, typename Iterator >
+static void
+write( Representation integer, Iterator& it, WithPadding ){
+  const auto noDigits =
+    Real< 0 >::noDigits( uint64_t( std::abs(integer) ) ) + (integer < 0);
+  if ( noDigits > w ){ Scientific< w, 0 >::writeInvalid( it ); return; }
+  auto remainingNonblanks = ( noDigits > m ) ? noDigits : m;
+  auto remainingBlanks = w - remainingNonblanks;
+  while( remainingBlanks-- ){ *it++ = ' '; }
+  std::array< char, w+1  > buffer;
+  int consumedCharacters =
+    snprintf( &buffer[0], remainingNonblanks + 1,
+              "%0*i", remainingNonblanks, integer );
+  if (consumedCharacters != remainingNonblanks){ throw std::exception(); }
+  auto begin = buffer.begin();
+  auto end = begin + remainingNonblanks;
+  while ( begin != end ) { *it++ = *begin++; }
+}
+
+

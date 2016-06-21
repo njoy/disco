@@ -4,10 +4,7 @@ read( Iterator& it, Iterator& end ){
   FixedWidthField::verifyWidth_( it, end, TrustTag< trust >() );
   
   auto position = FixedWidthField::skipPad( it );
-  if ( position == Real::endPosition ){
-    ++it;
-    return Representation(0.0);
-  }
+  if ( position == w ){ return Representation(0.0); }
   
   const auto sign = Real::parseSign(it, position);
 
@@ -20,7 +17,7 @@ read( Iterator& it, Iterator& end ){
 
   bool fractionSuccess = false;
   const auto decimalPosition = position;
-  const auto fraction  = Real::parseFraction( it, position, fractionSuccess );
+  const auto fraction = Real::parseFraction( it, position, fractionSuccess );
   
   if ( not baseSuccess && not fractionSuccess ){
     const bool succeeded = Real::parseInfinity( it, position );    
