@@ -37,8 +37,17 @@ struct FixedWidthField {
   
   constexpr static bool
   isSpace( const char c ){
-    return c == ' ' || c == '\t' || c == '\n'
-           || c == '\v' || c == '\f' || c == '\r';
+    return c == ' ' || c == '\t';
+  }
+
+  constexpr static bool
+  isNewline( const char c ){
+    return c == '\n' || c == '\f' || c == '\r';
+  }
+
+  constexpr static bool
+  isEOF( const char c ){
+    return c == std::char_traits<char>::eof();
   }
 
 #include "disco/FixedWidthField/src/skipPad.hpp"

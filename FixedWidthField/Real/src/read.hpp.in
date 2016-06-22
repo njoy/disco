@@ -4,7 +4,9 @@ read( Iterator& it, Iterator& end ){
   FixedWidthField::verifyWidth_( it, end, TrustTag< trust >() );
   
   auto position = FixedWidthField::skipPad( it );
-  if ( position == w ){ return Representation(0.0); }
+  if ( position == w
+       or FixedWidthField::isNewline(*it)
+       or FixedWidthField::isEOF(*it) ){ return Representation(0.0); }
   
   const auto sign = Real::parseSign(it, position);
 
@@ -21,7 +23,7 @@ read( Iterator& it, Iterator& end ){
   
   if ( not baseSuccess && not fractionSuccess ){
     const bool succeeded = Real::parseInfinity( it, position );    
-    if ( not succeeded || position != w ){
+    if ( not succeeded || position != w  ){
       throw std::runtime_error("cannot parse invalid real number");
     }
     return sign * std::numeric_limits< Representation >::infinity();
@@ -38,15 +40,18 @@ read( Iterator& it, Iterator& end ){
   }
 
   const auto exponent = Real::parseExponent( it, position ) - noFractionDigits;
-  ++it;
-  if ( position != Real::endPosition ){
+  auto encounteredEOL =
+    ( FixedWidthField::isNewline(*it) or FixedWidthField::isEOF(*it) );
+
+  if ( position != Real::endPosition and not encounteredEOL ){
     throw std::runtime_error
       ("illegal character encountered while parsing real number");
   } else if ( exponent < std::numeric_limits< Representation >::min_exponent10 ){
     return 0.0;
   } else if ( exponent > std::numeric_limits< Representation >::max_exponent10 ){
     return sign * std::numeric_limits< Representation >::infinity();
-  }
+  } 
+  it += not encounteredEOL;
   
   return  sign * int64_t(base * factor + fraction )
     * realExponentiation< Representation >::cache( exponent );

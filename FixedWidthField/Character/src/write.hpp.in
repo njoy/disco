@@ -1,0 +1,10 @@
+template< typename Iterator >
+static void
+write( const std::string& characterString, Iterator& it ){
+  int difference = w - int(characterString.size());
+  while ( difference-- > 0 ){ *it++ = ' '; }
+  auto remainingCharacters = ( characterString.size() < w ) ?
+                             characterString.size() : w;
+  auto stringIt = characterString.begin();
+  while ( remainingCharacters-- ){ *it++ = *stringIt++; }
+}

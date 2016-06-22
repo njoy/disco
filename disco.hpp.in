@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstdint>
 #include <limits>
 
@@ -38,3 +39,4 @@ struct Engineering;
 #include "disco/FixedWidthField/Real.hpp"
 #include "disco/FixedWidthField/Real/Scientific.hpp"
 #include "disco/FixedWidthField/Integer.hpp"
+#include "disco/FixedWidthField/Character.hpp"

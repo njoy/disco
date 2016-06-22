@@ -9,9 +9,9 @@ int testNumber = 0;
 
 int main( int argc, const char* argv[] ){
   LOG(INFO) << "";
-  LOG(INFO) << "Integer Tests";
+  LOG(INFO) << "Character Tests";
   LOG(INFO) << "=================================";
   int result = Catch::Session().run( argc, argv );
-  LOG(INFO) << "Integer Tests Complete!";
+  LOG(INFO) << "Character Tests Complete!";
   return result;
 }

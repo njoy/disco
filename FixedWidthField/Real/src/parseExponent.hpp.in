@@ -38,13 +38,17 @@ parseExponent( Iterator& it, uint16_t& position ){
     throw std::runtime_error
       ("illegal character encountered while parsing real number");
   }
-  //boundCheck( position );
   uint64_t exponent = 0;
-  while ( isdigit( *it ) ){
+
+  if ( not isdigit( *it ) ){
+    throw std::runtime_error
+      ("illegal character encountered while parsing real number");
+  }
+  do {
     exponent = 10 * exponent + ( *it - 48 );
     if ( position == Real::endPosition ){ break; }
     ++position; ++it;
-  }
+  } while ( isdigit( *it ) );
 
   return sign * exponent;
 }

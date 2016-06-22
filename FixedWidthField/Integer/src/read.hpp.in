@@ -1,22 +1,30 @@
 template< typename T, typename Iterator, bool trust = true >
-static T read( Iterator& it, const Iterator& end ){
+static T
+read( Iterator& it, const Iterator& end ){
   using Signedness = typename utility::TypeSwitch
                                        < Signed, Unsigned,
                                          std::is_signed< T >::value >::type;
   FixedWidthField::verifyWidth_( it, end, TrustTag< trust >() );
   auto position = FixedWidthField::skipPad( it );
-  if ( position == w ) { return T(0); }
-  const auto remainingCharacters = (w - position);
-  char* begin = const_cast<char*>(&(*it));
-  auto endPtr = begin + remainingCharacters;
+
+  if ( position == w
+       or FixedWidthField::isNewline(*it)
+       or FixedWidthField::isEOF(*it) ){ return T(0); }
+  
+  auto remainingCharacters = (w - position);
+  char* begin = const_cast<char*>(&(*it++));
+  while ( --remainingCharacters
+          and not ( FixedWidthField::isNewline( *it )
+                    or FixedWidthField::isEOF( *it++ ) ) ){}
+  auto endPtr = const_cast<char*>(&(*it));
+  auto distance = endPtr - begin;
   auto result = Integer::parseInteger( begin, endPtr, Signedness() );
-  if ( ( endPtr - begin ) != remainingCharacters ){
+  if ( ( endPtr - begin ) != distance ){
     throw std::runtime_error("Bad value during integer read");
   } else if ( result < std::numeric_limits< T >::min() ){
     throw std::runtime_error("Value overflowed during integer read");
   } else if ( result > std::numeric_limits< T >::max() ){
     throw std::runtime_error("Value overflowed during integer read");
   }
-  it += remainingCharacters;
   return static_cast< T >(result);
 }

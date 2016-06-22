@@ -1,8 +1,7 @@
 #define CATCH_CONFIG_RUNNER
 
 #include "catch.hpp"
-
-#include "disco.hpp"
+#include "easylogging++.h"
 
 INITIALIZE_EASYLOGGINGPP
 
