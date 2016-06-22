@@ -22,6 +22,11 @@ struct Integer : public FixedWidthField< w >{
   /* methods */
 #include "disco/FixedWidthField/Integer/src/read.hpp"
 
+  template< typename Iterator >
+  static void write( Iterator& it ){
+    ColumnPosition< w >::write( it );
+  }
+  
   template< typename Representation, typename Iterator >
   static void
   write( Representation integer, Iterator& it ){

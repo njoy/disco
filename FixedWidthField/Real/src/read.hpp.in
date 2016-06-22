@@ -56,3 +56,9 @@ read( Iterator& it, Iterator& end ){
   return  sign * int64_t(base * factor + fraction )
     * realExponentiation< Representation >::cache( exponent );
 }
+
+template< typename Iterator, bool trust = true >
+static double
+read( Iterator& it, Iterator& end ){
+  return read<double>( it, end );
+}

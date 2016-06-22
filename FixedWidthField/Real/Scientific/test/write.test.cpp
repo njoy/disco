@@ -98,5 +98,9 @@ SCENARIO("Scientific write", "[Scientific], [write]"){
       disco::Scientific< 11, 4 >::write( 10.0, it );
       REQUIRE( buffer == ( pair.second + " 1.0000E+01" ) );
     }
-  }  
+  }
+  std::string buffer("");
+  auto it = std::back_inserter(buffer);
+  disco::Scientific< 11, 4 >::write( it );
+  REQUIRE(buffer == "           ");
 }

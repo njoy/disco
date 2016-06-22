@@ -33,12 +33,14 @@ struct Scientific : public Real< w > {
     return ( int(w) - d - exponentDigits - 4 - ( real < 0 ) ) < 0;
   }
 
+  using Real::write;
+  
 #include "disco/FixedWidthField/Real/Scientific/src/write.hpp" 
 #include "disco/FixedWidthField/Real/Scientific/src/writeWithoutConsumption.hpp" 
 #include "disco/FixedWidthField/Real/Scientific/src/writeWithConsumption.hpp" 
 #include "disco/FixedWidthField/Real/Scientific/src/writeInvalid.hpp"
 #include "disco/FixedWidthField/Real/Scientific/src/writeZero.hpp"
-#include "disco/FixedWidthField/Real/Scientific/src/writeInfinity.hpp" 
+#include "disco/FixedWidthField/Real/Scientific/src/writeInfinity.hpp"
  
 };
 

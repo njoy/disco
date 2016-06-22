@@ -32,6 +32,7 @@ configure_file(
 set(headers "")
 list(APPEND headers
   "FixedWidthField"
+  "Record"
   )
 
 foreach(header ${headers})

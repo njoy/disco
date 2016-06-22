@@ -18,5 +18,9 @@ SCENARIO("Character write", "[Character], [write]"){
       disco::Character< 11 >::write( pair.first, it );
       REQUIRE(buffer == pair.second);
     }
+    std::string buffer("");
+    auto it = std::back_inserter(buffer);
+    disco::Character< 11 >::write( it );
+    REQUIRE(buffer == "           ");
   }
 }

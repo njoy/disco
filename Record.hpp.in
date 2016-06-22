@@ -1,0 +1,75 @@
+namespace disco{
+
+template<>
+struct Record<> {
+  template< typename Iterator >
+  static void read( Iterator& it ){
+    auto foundEndOfRecord = [&it](){
+      return ( FixedWidthField< 0 >::isNewline(*it)
+               or FixedWidthField< 0 >::isEOF(*it++) );
+    };
+    while ( not foundEndOfRecord() ){}
+  }
+  
+  template< typename Iterator, typename... Args >
+  static void write( Iterator& it, Args... ){
+    *it++='\n';
+  }
+};
+
+template<>
+struct Record< RetainCarriage > {
+  template< typename Iterator >
+  static void read( Iterator& ){}
+  
+  template< typename Iterator, typename... Args >
+  static void write( Iterator&, Args... ){}
+};
+
+template< uint16_t w, typename... Components >
+struct Record< ColumnPosition< w >, Components... > {
+
+  template< typename Iterator, typename... Args >
+  static void read( Iterator& it, Iterator& end, Args... args ){
+    ColumnPosition< w >::read( it, end );
+    Record< Components... >::read( it, end, std::forward< Args >(args)... );
+  }
+
+  template< typename Iterator, typename... Args >
+  static void write( Iterator& it, Args... args ){
+    ColumnPosition< w >::write( it );
+    Record< Components... >::write( it, std::forward< Args >(args)... );
+  }
+  
+};
+
+template< typename Component, typename... Components >
+struct Record< Component, Components... > {
+
+  template< typename Iterator >
+  static void read( Iterator& it, Iterator& end ){
+    Component::read( it, end );
+    Record< Components... >::read( it, end );
+  }
+  
+  template< typename Iterator, typename SinkType, typename... Args >
+  static void read( Iterator& it, Iterator& end, SinkType& sink, Args... args ){
+    sink = Component::template read< SinkType >( it, end );
+    Record< Components... >::read( it, end, std::forward< Args >(args)... );
+  }
+
+  template< typename Iterator >
+  static void write( Iterator& it ){
+    Component::write( it );
+    Record< Components... >::write( it );
+  }
+  
+  template< typename Iterator, typename SourceType, typename... Args >
+  static void write( Iterator& it, SourceType& source, Args... args ){
+    Component::write( source, it );
+    Record< Components... >::write( it, std::forward< Args >(args)... );
+  }
+  
+};
+
+}

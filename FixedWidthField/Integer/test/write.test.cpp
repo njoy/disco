@@ -39,4 +39,8 @@ SCENARIO("Integer write", "[Integer], [write]"){
     disco::Integer< 11, 4 >::write( std::numeric_limits<int>::max(), it );
     REQUIRE(buffer == " 2147483647");
   }
+  std::string buffer("");
+  auto it = std::back_inserter(buffer);
+  disco::Integer< 11 >::write( it );
+  REQUIRE(buffer == "           ");
 }
