@@ -41,9 +41,32 @@ SCENARIO("Record read", "[Record], [read]"){
             Scientific< 11, 4 > >::write( sinkit, sink1, sink2, sink3, sink4 );
     REQUIRE( sink == " 1.0000E+00 2.0000E+00 3.0000E+00 4.0000E+00\n" );
   }
+    {
+    std::string source = "        1.0        2.0        3.0        4.0       1234  foobar\n";
+    auto  it = source.begin();
+    auto  end = source.end();
+    double sink1;
+    double sink2;
+    double sink3;
+    double sink4;
+    int sink5;
+    std::string sink6;
+    Record< Scientific< 11, 4 >,
+            Scientific< 11, 4 >,
+            Scientific< 11, 4 >,
+            Scientific< 11, 4 >,
+            Integer< 11 >,
+            Character< 11 > >::read( it, end, sink1, sink2, sink3, sink4, sink5, sink6 );
+    REQUIRE( sink1 == 1.0 );
+    REQUIRE( sink2 == 2.0 );
+    REQUIRE( sink3 == 3.0 );
+    REQUIRE( sink4 == 4.0 );
+    REQUIRE( sink5 == 1234 );
+    REQUIRE( sink6 == "  foobar   " );
+  }
   {
     std::vector< double > sink(4, 0.0);
-    auto it = sink.begin();
+    auto it = sink.begin(); // can't use back inserter =(
     std::string source = "        1.0        2.0        3.0        4.0\n";
     auto sourceIt = source.begin();
     auto end = source.end();
