@@ -1,6 +1,6 @@
 template< typename Representation, typename Iterator, bool trust = true >
 static Representation
-read( Iterator& it, Iterator& end ){
+read( Iterator& it, const Iterator& end ){
   FixedWidthField::verifyWidth_( it, end, TrustTag< trust >() );
   
   auto position = FixedWidthField::skipPad( it );
@@ -59,6 +59,6 @@ read( Iterator& it, Iterator& end ){
 
 template< typename Iterator, bool trust = true >
 static double
-read( Iterator& it, Iterator& end ){
+read( Iterator& it, const Iterator& end ){
   return read<double>( it, end );
 }

@@ -48,5 +48,6 @@ list(APPEND testLabels disco)
 
 # traverse subdirectories
 add_subdirectory( "${CMAKE_CURRENT_SOURCE_DIR}/FixedWidthField" )
+add_subdirectory( "${CMAKE_CURRENT_SOURCE_DIR}/Record" )
 
 include(${commonCMakeScripts_path}/terminus.cmake)

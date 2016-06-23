@@ -9,12 +9,12 @@ parseInfinity( Iterator& it, uint16_t& position ){
   switch ( remainingWidth ){
   case 3:
     position += 3;
-    return ( canProceed() && toupper( *it++ ) == 'I' )
+    return ( toupper( *it++ ) == 'I' )
            && ( canProceed() && toupper( *it++ ) == 'N' )
            && ( canProceed() && toupper( *it++ ) == 'F' );
   case 8:
     position += 8;
-    return ( canProceed() && toupper( *it++ ) == 'I' )
+    return ( toupper( *it++ ) == 'I' )
            && ( canProceed() && toupper( *it++ ) == 'N' )
            && ( canProceed() && toupper( *it++ ) == 'F' )
            && ( canProceed() && toupper( *it++ ) == 'I' )
