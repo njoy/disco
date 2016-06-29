@@ -1,8 +1,23 @@
+template< typename Representation >
+static Representation
+abs( Representation integer, std::true_type ){
+  return std::abs( integer );
+}
+
+template< typename Representation >
+static Representation
+abs( Representation integer, std::false_type ){
+  return integer;
+}
+
 template< typename Representation, typename Iterator >
 static void
 write( Representation integer, Iterator& it, WithoutPadding ){
+  
   const auto noDigits =
-    Real< 0 >::noDigits( uint64_t( std::abs(integer) ) ) + (integer < 0);
+    Real< 0 >::noDigits
+    ( uint64_t( abs( integer, std::is_signed< Representation >() ) ) )
+    + (integer < 0);
   if ( noDigits > w ){ Scientific< w, 0 >::writeInvalid( it ); return; }
   std::array< char, w+1  > buffer;
   int consumedCharacters = snprintf( &buffer[0], w+1, "%*i", w, integer);
@@ -16,7 +31,9 @@ template< typename Representation, typename Iterator >
 static void
 write( Representation integer, Iterator& it, WithPadding ){
   const auto noDigits =
-    Real< 0 >::noDigits( uint64_t( std::abs(integer) ) ) + (integer < 0);
+    Real< 0 >::noDigits
+    ( uint64_t( abs( integer, std::is_signed< Representation >() ) ) )
+    + (integer < 0);
   if ( noDigits > w ){ Scientific< w, 0 >::writeInvalid( it ); return; }
   auto remainingNonblanks = ( noDigits > m ) ? noDigits : m;
   auto remainingBlanks = w - remainingNonblanks;
