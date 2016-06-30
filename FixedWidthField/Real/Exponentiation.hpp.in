@@ -5,7 +5,7 @@ struct Exponentation {
   static constexpr auto& value =
     Exponentation< Representation, N - 1, N, Rest... >::value;
   
-  static Representation
+  static constexpr Representation
   cache( int power ){
     return Exponentation< Representation, N - 1, N, Rest... >::cache( power );
   }
@@ -19,7 +19,7 @@ struct Exponentation< Representation, 0, Rest... > {
   static constexpr Representation
   value[] = { disco::pow( Representation(10), -offset ), disco::pow( Representation(10), Rest - offset)... };
 
-  static Representation
+  static constexpr Representation
   cache( int power ){
     return value[power + offset];
   }
@@ -34,6 +34,6 @@ using realExponentiation = Exponentation< Representation, 615 >;
 template< typename Representation >
 using integerExponentiation =
   Exponentation< Representation,
-                 int( noDigits( std::numeric_limits< Representation >::max() ) ) >;
+                 int( noDigits( std::numeric_limits< Representation >::max() ) - 1 ) >;
 
 }

@@ -7,6 +7,7 @@ set(long_path "${disco_HEADER_DIR}/FixedWidthField/Real")
 set(header_only_subdirs "")
 list(APPEND header_only_subdirs
   "Scientific"
+  "FixedPoint"
   )
 
 set(subdirs "")
