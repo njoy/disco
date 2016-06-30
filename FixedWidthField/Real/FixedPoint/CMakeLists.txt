@@ -1,8 +1,8 @@
 if(${verbose_traversal})
-  message(STATUS "Entered Scientific directory")
+  message(STATUS "Entered FixedPoint directory")
 endif(${verbose_traversal})
 
-set(long_path "${disco_HEADER_DIR}/FixedWidthField/Real/Scientific")
+set(long_path "${disco_HEADER_DIR}/FixedWidthField/Real/FixedPoint")
 
 set(header_only_subdirs "")
 list(APPEND header_only_subdirs)
@@ -25,11 +25,6 @@ endif(NOT(EXISTS "${long_path}/src"))
 set(headers "")
 list(APPEND headers
   "src/write"
-  "src/writeInfinity"
-  "src/writeInvalid"
-  "src/writeWithConsumption"
-  "src/writeWithoutConsumption"
-  "src/writeZero"
   ${subdirs}
   )
 
@@ -46,10 +41,10 @@ foreach (subdir ${subdirs})
 endforeach (subdir)
 
 if(${local_testing})
-  list(APPEND testLabels Scientific)
+  list(APPEND testLabels FixedPoint)
   add_subdirectory( "${CMAKE_CURRENT_SOURCE_DIR}/test" )
 endif(${local_testing})
 
 if(${verbose_traversal})
-  message(STATUS "Exiting Scientific directory")
+  message(STATUS "Exiting FixedPoint directory")
 endif(${verbose_traversal})
