@@ -12,6 +12,7 @@ read( Iterator& it, const Iterator& end ){
 
   bool baseSuccess = false;
   auto base = Real::parseBase(it, position, baseSuccess);
+  //LOG(INFO) << "base: " << base;
   if ( position == Real::endPosition ){
     ++it;
     return Representation( sign * int64_t( base ) );
@@ -20,7 +21,7 @@ read( Iterator& it, const Iterator& end ){
   bool fractionSuccess = false;
   const auto decimalPosition = position;
   const auto fraction = Real::parseFraction( it, position, fractionSuccess );
-  
+  //LOG(INFO) << "fraction: " << fraction;
   if ( not baseSuccess && not fractionSuccess ){
     const bool succeeded = Real::parseInfinity( it, position );    
     if ( not succeeded || position != w  ){
@@ -31,15 +32,17 @@ read( Iterator& it, const Iterator& end ){
 
   const auto noFractionDigits =
     fractionSuccess * ( position - decimalPosition - (position != endPosition) );
+  //LOG(INFO) << "noFractionDigits: " << noFractionDigits;
   const auto factor =
     integerExponentiation< uint64_t >::cache( noFractionDigits );
-
+  //LOG(INFO) << "factor: " << factor;
   if ( position == Real::endPosition ){
     ++it;
     return sign * ( base + fraction / Representation(factor) );
   }
 
   const auto exponent = Real::parseExponent( it, position ) - noFractionDigits;
+  //LOG(INFO) << "exponent: " << exponent;
   auto encounteredEOL =
     ( FixedWidthField::isNewline(*it) or FixedWidthField::isEOF(*it) );
 

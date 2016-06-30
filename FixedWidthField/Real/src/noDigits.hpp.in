@@ -20,5 +20,5 @@ noDigits( UnsignedInteger mantissa ){
   if ( mantissa < 100000000000000000ull ){ return 17; };
   if ( mantissa < 1000000000000000000ull ){ return 18; };
   if ( mantissa < 10000000000000000000ull ){ return 19; };
-  throw std::runtime_error("Argument has too many digits");
+  return 20;
 }

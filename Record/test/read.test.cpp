@@ -79,7 +79,7 @@ SCENARIO("Record read", "[Record], [read]"){
     REQUIRE( sink[2] == 3 );
     REQUIRE( sink[3] == 4 );
   }
-    {
+  {
     std::vector< double > sink(4, 0.0);
     auto it = sink.begin();
     std::string source = "        1.0        2.0        3.0        4.0\n";
