@@ -19,6 +19,11 @@ SCENARIO("Integer write", "[Integer], [write]"){
       disco::Integer< 11 >::write( pair.first, it );
       REQUIRE(buffer == pair.second);
     }
+    std::string buffer("");
+    auto it = std::back_inserter(buffer);
+    std::uint64_t ul = 1;
+    disco::Integer< 11 >::write( ul, it );
+    REQUIRE(buffer == "          1");
   }
   {
     std::vector< std::pair< int, std::string > >

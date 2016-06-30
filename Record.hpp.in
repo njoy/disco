@@ -14,7 +14,7 @@ struct Record<> {
   }
   
   template< typename Iterator, typename... Args >
-  static void write( Iterator& it, Args&... ){
+  static void write( Iterator& it, const Args&... ){
     *it++='\n';
   }
   
@@ -27,7 +27,7 @@ struct Record< RetainCarriage > {
   static void read( Iterator&, const Iterator& ){}
   
   template< typename Iterator, typename... Args >
-  static void write( Iterator&, Args&... ){}
+  static void write( Iterator&, const Args&... ){}
   
 };
 
@@ -72,7 +72,7 @@ struct Record< Component, Components... > {
   }
   
   template< typename Iterator, typename SourceType, typename... Args >
-  static void write( Iterator& it, SourceType& source, const Args&... args ){
+  static void write( Iterator& it, const SourceType& source, const Args&... args ){
     Component::write( source, it );
     Subrecord::write( it, args... );
   }
