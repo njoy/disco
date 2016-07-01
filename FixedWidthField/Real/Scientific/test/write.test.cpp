@@ -99,8 +99,73 @@ SCENARIO("Scientific write", "[Scientific], [write]"){
       REQUIRE( buffer == ( pair.second + " 1.0000E+01" ) );
     }
   }
-  std::string buffer("");
-  auto it = std::back_inserter(buffer);
-  disco::Scientific< 11, 4 >::write( it );
-  REQUIRE(buffer == "           ");
+  {
+    std::string buffer("");
+    auto it = std::back_inserter(buffer);
+    disco::Scientific< 11, 4 >::write( it );
+    REQUIRE(buffer == "           ");
+  }
+  {
+    std::string buffer("");
+    auto it = std::back_inserter(buffer);
+    disco::Scientific< 4, 0 >::write( std::numeric_limits<double>::infinity(),
+                                      it );
+                                      
+    REQUIRE(buffer == " Inf");
+  }
+  {
+    std::string buffer("");
+    auto it = std::back_inserter(buffer);
+    disco::Scientific< 4, 0 >::write( -std::numeric_limits<double>::infinity(),
+                                      it );
+    REQUIRE(buffer == "-Inf");
+  }
+  {
+    std::string buffer("");
+    auto it = std::back_inserter(buffer);
+    disco::Scientific< 3, 0 >::write( std::numeric_limits<double>::infinity(),
+                                      it );
+                                      
+    REQUIRE(buffer == "Inf");
+  }
+  {
+    std::string buffer("");
+    auto it = std::back_inserter(buffer);
+    disco::Scientific< 8, 0 >::write( std::numeric_limits<double>::infinity(),
+                                      it );
+    
+    REQUIRE(buffer == "Infinity");
+  }
+    {
+    std::string buffer("");
+    auto it = std::back_inserter(buffer);
+    disco::Scientific< 8, 0 >::write( -std::numeric_limits<double>::infinity(),
+                                      it );
+    
+    REQUIRE(buffer == "    -Inf");
+  }
+  {
+    std::string buffer("");
+    auto it = std::back_inserter(buffer);
+    disco::Scientific< 3, 0 >::write( -std::numeric_limits<double>::infinity(),
+                                      it );
+    
+    REQUIRE(buffer == "***");
+  }
+  {
+    std::string buffer("");
+    auto it = std::back_inserter(buffer);
+    disco::Scientific< 2, 0 >::write( std::numeric_limits<double>::infinity(),
+                                      it );
+                                      
+    REQUIRE(buffer == "**");
+  }
+  {
+    std::string buffer("");
+    auto it = std::back_inserter(buffer);
+    disco::Scientific< 2, 0 >::write( -std::numeric_limits<double>::infinity(),
+                                      it );
+                                      
+    REQUIRE(buffer == "**");
+  }    
 }

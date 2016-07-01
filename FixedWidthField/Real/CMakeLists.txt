@@ -8,6 +8,7 @@ set(header_only_subdirs "")
 list(APPEND header_only_subdirs
   "Scientific"
   "FixedPoint"
+  "ENDF"
   )
 
 set(subdirs "")

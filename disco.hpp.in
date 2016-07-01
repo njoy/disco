@@ -31,6 +31,8 @@ struct Scientific;
 template< uint16_t w, uint16_t d >
 struct FixedPoint;
 
+struct ENDF;
+
 template < typename... Components >
 struct Record;
 
@@ -46,6 +48,7 @@ struct RetainCarriage{};
 #include "disco/FixedWidthField/Real.hpp"
 #include "disco/FixedWidthField/Real/Scientific.hpp"
 #include "disco/FixedWidthField/Real/FixedPoint.hpp"
+#include "disco/FixedWidthField/Real/ENDF.hpp"
 #include "disco/FixedWidthField/Integer.hpp"
 #include "disco/FixedWidthField/Character.hpp"
 #include "disco/Record.hpp"
@@ -64,6 +67,9 @@ using I = Integer< w, m >;
 template< uint16_t w, uint16_t d,
           uint16_t e = std::numeric_limits<uint16_t>::max() >
 using Es = Scientific< w, d, e >;
+
+template< uint16_t w, uint16_t d >
+using F = FixedPoint< w, d >;
 
 }
 
