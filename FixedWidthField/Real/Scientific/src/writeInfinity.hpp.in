@@ -1,13 +1,13 @@
 template< typename Iterator >
 static void
 writeInfinity( Iterator& it, bool isNegative, typename Real::Full ){
-  auto remainingBlanks = w - 8 - isNegative;
+  auto remainingBlanks = w - 8;
   while ( --remainingBlanks > 0 ){
     *it++ = ' ';
   }
   if ( isNegative ){
     *it++ = '-'; 
-  } else if ( remainingBlanks == 0 ){
+  } else if ( remainingBlanks == 0 ) {
     *it++ = ' ';
   }
   *it++ = 'I';
@@ -23,8 +23,8 @@ writeInfinity( Iterator& it, bool isNegative, typename Real::Full ){
 template< typename Iterator >
 static void
 writeInfinity( Iterator& it, bool isNegative, typename Real::Partial ){
-  auto remainingBlanks = int(w) - 3 - isNegative;
-  if ( remainingBlanks < 0 ){
+  auto remainingBlanks = int(w) - 3;
+  if (  (remainingBlanks - isNegative) < 0 ){
     writeInvalid( it );
     return;
   }

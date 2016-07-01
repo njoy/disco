@@ -1,15 +1,11 @@
 if(${verbose_traversal})
-  message(STATUS "Entered Real directory")
+  message(STATUS "Entered ENDF directory")
 endif(${verbose_traversal})
 
-set(long_path "${disco_HEADER_DIR}/FixedWidthField/Real")
+set(long_path "${disco_HEADER_DIR}/FixedWidthField/Real/ENDF")
 
 set(header_only_subdirs "")
-list(APPEND header_only_subdirs
-  "Scientific"
-  "FixedPoint"
-  "ENDF"
-  )
+list(APPEND header_only_subdirs)
 
 set(subdirs "")
 list(APPEND subdirs
@@ -28,15 +24,7 @@ endif(NOT(EXISTS "${long_path}/src"))
 
 set(headers "")
 list(APPEND headers
-  "src/noDigits"
-  "src/parseSign"
-  "src/parseBase"
-  "src/parseFraction"
-  "src/parseExponent"
-  "src/parseInfinity"
-  "src/read"
-  "Pow"
-  "Exponentiation"
+  "src/write"
   ${subdirs}
   )
 
@@ -53,10 +41,10 @@ foreach (subdir ${subdirs})
 endforeach (subdir)
 
 if(${local_testing})
-  list(APPEND testLabels Real)
+  list(APPEND testLabels ENDF)
   add_subdirectory( "${CMAKE_CURRENT_SOURCE_DIR}/test" )
 endif(${local_testing})
 
 if(${verbose_traversal})
-  message(STATUS "Exiting Real directory")
+  message(STATUS "Exiting ENDF directory")
 endif(${verbose_traversal})
