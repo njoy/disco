@@ -2,8 +2,8 @@ template< typename Iterator >
 static bool
 parseInfinity( Iterator& it, uint16_t& position ){
   auto canProceed = [&it](){
-    return not ( FixedWidthField::isNewline(*it)
-                 or FixedWidthField::isEOF(*it) );
+    return not ( FixedWidthField_::isNewline(*it)
+                 or FixedWidthField_::isEOF(*it) );
   };
   const auto remainingWidth = int(w) - position;
   switch ( remainingWidth ){

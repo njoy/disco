@@ -4,18 +4,18 @@ read( Iterator& it, const Iterator& end ){
   using Signedness = typename utility::TypeSwitch
                                        < Signed, Unsigned,
                                          std::is_signed< T >::value >::type;
-  FixedWidthField::verifyWidth_( it, end, TrustTag< trust >() );
-  auto position = FixedWidthField::skipPad( it );
+  FixedWidthField_::verifyWidth_( it, end, TrustTag< trust >() );
+  auto position = FixedWidthField_::skipPad( it );
 
   if ( position == w
-       or FixedWidthField::isNewline(*it)
-       or FixedWidthField::isEOF(*it) ){ return T(0); }
+       or FixedWidthField_::isNewline(*it)
+       or FixedWidthField_::isEOF(*it) ){ return T(0); }
   
   auto remainingCharacters = (w - position);
   char* begin = const_cast<char*>(&(*it++));
   while ( --remainingCharacters
-          and not ( FixedWidthField::isNewline( *it )
-                    or FixedWidthField::isEOF( *it++ ) ) ){}
+          and not ( FixedWidthField_::isNewline( *it )
+                    or FixedWidthField_::isEOF( *it++ ) ) ){}
   auto endPtr = const_cast<char*>(&(*it));
   auto distance = endPtr - begin;
   auto result = Integer::parseInteger( begin, endPtr, Signedness() );

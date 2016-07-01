@@ -3,7 +3,7 @@ namespace disco {
 template< uint16_t w, uint16_t d >
 struct FixedPoint : public Real< w > {
 
-  using Real = Real< w >;
+  using Real_ = Real< w >;
 
   static constexpr int64_t maxPositiveValue =
     integerExponentiation< int64_t >::cache( int(w) - d - 1 );
@@ -13,8 +13,8 @@ struct FixedPoint : public Real< w > {
   
   using InfinityPrintingPolicy =
     typename utility::TypeSwitch
-             < typename Real::Full, typename utility::TypeSwitch
-               < typename Real::Partial, typename Real::PartialNegative,
+             < typename Real_::Full, typename utility::TypeSwitch
+               < typename Real_::Partial, typename Real_::PartialNegative,
                  ( w < 8 ) >::type, ( w > 8 ) >::type;
   
   template< typename Representation >

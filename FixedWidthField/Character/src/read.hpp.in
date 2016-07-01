@@ -4,12 +4,12 @@ read( Iterator& it, const Iterator& end ){
   static_assert( std::is_same< Representation, std::string >::value,
                  "Character strings are only defined for std::string" );
   std::string characterString;
-  FixedWidthField::verifyWidth_( it, end, TrustTag< trust >() );
+  FixedWidthField_::verifyWidth_( it, end, TrustTag< trust >() );
   characterString.reserve(w);
   auto remainingCharacters = w;
   while( remainingCharacters--
-         and not ( FixedWidthField::isNewline( *it )
-                   or FixedWidthField::isEOF( *it ) ) ){
+         and not ( FixedWidthField_::isNewline( *it )
+                   or FixedWidthField_::isEOF( *it ) ) ){
     characterString.push_back( *it++ );
   }
   ++remainingCharacters;

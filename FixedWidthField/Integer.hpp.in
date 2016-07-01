@@ -3,10 +3,10 @@ namespace disco {
 template< uint16_t w, uint16_t m >
 struct Integer : public FixedWidthField< w >{
   
-  using FixedWidthField = FixedWidthField< w >;
+  using FixedWidthField_ = FixedWidthField< w >;
 
   template< bool trust >
-  using TrustTag = typename FixedWidthField:: template TrustTag< trust >;
+  using TrustTag = typename FixedWidthField_:: template TrustTag< trust >;
   
   struct Signed{};
   struct Unsigned{};

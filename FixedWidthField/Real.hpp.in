@@ -19,10 +19,10 @@ struct Real : public FixedWidthField< w >{
   static constexpr uint16_t endPosition = w - 1;
 
   /* convenience typedefs */
-  using FixedWidthField = FixedWidthField< w >;
+  using FixedWidthField_ = FixedWidthField< w >;
 
   template< bool trust >
-  using TrustTag = typename FixedWidthField:: template TrustTag< trust >;
+  using TrustTag = typename FixedWidthField_:: template TrustTag< trust >;
   
   /* methods */
 #include "disco/FixedWidthField/Real/src/read.hpp"

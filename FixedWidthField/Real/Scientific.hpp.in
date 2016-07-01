@@ -3,14 +3,14 @@ namespace disco {
 template< uint16_t w, uint16_t d, uint16_t e >
 struct Scientific : public Real< w > {
 
-  using Real = Real< w >;
-  using MayConsumeExponent = typename Real::MayConsumeExponent;
-  using MayNotConsumeExponent = typename Real::MayNotConsumeExponent;
+  using Real_ = Real< w >;
+  using MayConsumeExponent = typename Real_::MayConsumeExponent;
+  using MayNotConsumeExponent = typename Real_::MayNotConsumeExponent;
 
   using InfinityPrintingPolicy =
     typename utility::TypeSwitch
-             < typename Real::Full, typename utility::TypeSwitch
-               < typename Real::Partial, typename Real::PartialNegative,
+             < typename Real_::Full, typename utility::TypeSwitch
+               < typename Real_::Partial, typename Real_::PartialNegative,
                  ( w < 8 ) >::type, ( w > 8 ) >::type;
   
   using ExponentPolicy =
@@ -33,7 +33,7 @@ struct Scientific : public Real< w > {
     return ( int(w) - d - exponentDigits - 4 - ( real < 0 ) ) < 0;
   }
 
-  using Real::write;
+  using Real_::write;
   
 #include "disco/FixedWidthField/Real/Scientific/src/write.hpp" 
 #include "disco/FixedWidthField/Real/Scientific/src/writeWithoutConsumption.hpp" 
@@ -41,7 +41,7 @@ struct Scientific : public Real< w > {
 #include "disco/FixedWidthField/Real/Scientific/src/writeInvalid.hpp"
 #include "disco/FixedWidthField/Real/Scientific/src/writeZero.hpp"
 #include "disco/FixedWidthField/Real/Scientific/src/writeInfinity.hpp"
- 
+  
 };
 
 }

@@ -3,7 +3,7 @@ namespace disco {
 struct ENDF : public Real< 11 > {
 
   static constexpr int w = 11;
-  using Real = Real< w >;
+  using Real_ = Real< w >;
 
   static constexpr double maxValue = 1E39;
   static constexpr double minValue = 1E-38;

@@ -20,7 +20,7 @@ template< typename Representation, typename Iterator >
 static void
 write( Representation real, Iterator& it, MayNotConsumeExponent ){
   const int requiredDigits =
-    Real::noDigits( std::ceil( std::abs( std::log10( std::abs( real ) ) ) ) );
+    Real_::noDigits( std::ceil( std::abs( std::log10( std::abs( real ) ) ) ) );
   ( requiredDigits <= exponentDigits ) ? 
     writeWithoutConsumption( real, it, requiredDigits ) :
     writeInvalid( it );
@@ -30,7 +30,7 @@ template< typename Representation, typename Iterator >
 static void
 write( Representation real, Iterator& it, MayConsumeExponent ){
   const int requiredDigits =
-    Real::noDigits( std::ceil( std::abs( std::log10( std::abs( real ) ) ) ) );
+    Real_::noDigits( std::ceil( std::abs( std::log10( std::abs( real ) ) ) ) );
   ( requiredDigits <= exponentDigits ) ? 
     writeWithoutConsumption( real, it, requiredDigits ) :
     ( requiredDigits <= ( exponentDigits + 1 ) ) ?
