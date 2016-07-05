@@ -26,6 +26,7 @@ set(headers "")
 list(APPEND headers
   "src/read"
   "src/write"
+  "src/parseInteger"
   ${subdirs}
   )
 

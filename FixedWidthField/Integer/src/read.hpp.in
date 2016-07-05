@@ -8,25 +8,18 @@ read( Iterator& it, const Iterator& end ){
   auto position = FixedWidthField_::skipPad( it );
 
   if ( position == w
-       or FixedWidthField_::isNewline(*it)
-       or FixedWidthField_::isEOF(*it) ){ return T(0); }
+       or FixedWidthField_::isNewline( *it )
+       or FixedWidthField_::isEOF( *it ) ){ return T(0); }
   
-  auto remainingCharacters = (w - position);
-  char* begin = const_cast<char*>(&(*it++));
-  while ( --remainingCharacters
-          and not ( FixedWidthField_::isNewline( *it )
-                    or FixedWidthField_::isEOF( *it++ ) ) ){}
-  auto endPtr = const_cast<char*>(&(*it));
-  auto distance = endPtr - begin;
-  auto result = Integer::parseInteger( begin, endPtr, Signedness() );
-  if ( ( endPtr - begin ) != distance ){
-    throw std::runtime_error("Bad value during integer read");
-  } else if ( result < std::numeric_limits< T >::min() ){
+  auto remainingCharacters = ( w - position );
+
+  auto result = parseInteger( it, remainingCharacters, Signedness() );
+  if ( result < std::numeric_limits< T >::min() ){
     throw std::runtime_error("Value overflowed during integer read");
   } else if ( result > std::numeric_limits< T >::max() ){
     throw std::runtime_error("Value overflowed during integer read");
   }
-  return static_cast< T >(result);
+  return static_cast< T >( result );
 }
 
 template< typename Iterator, bool trust = true >

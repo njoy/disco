@@ -36,15 +36,8 @@ struct Integer : public FixedWidthField< w >{
 #include "disco/FixedWidthField/Integer/src/write.hpp"
 
   /* helpers */
-  static long long
-  parseInteger( char* begin, char*& end, Signed ){
-    return strtoll( begin, &end, 10);
-  }
 
-  static unsigned long long
-  parseInteger( char* begin, char*& end, Unsigned ){
-    return strtoull( begin, &end, 10);
-  }
+#include "disco/FixedWidthField/Integer/src/parseInteger.hpp"
   
 };
 
