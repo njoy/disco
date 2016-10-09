@@ -1,39 +1,40 @@
 namespace disco {
 
-template< typename Representation, int N, int... Rest >
+template< typename Representation, int length, int offset >
+constexpr auto generateCache(){
+  std::array< Representation, length > partialCache{};
+  auto hackIterator = &( std::get<0>(partialCache) );
+  for ( int index = 0; index < length; ++index ){
+    hackIterator[index] = disco::pow( Representation(10), index - offset );
+  }
+  return partialCache;
+}
+
+template< typename Representation, int length, int offset >
+constexpr auto cachedPowers = generateCache< Representation, length, offset >();
+
+template< typename Representation, int length  >
 struct Exponentation {
-  static constexpr auto& value =
-    Exponentation< Representation, N - 1, N, Rest... >::value;
+  static constexpr int
+  offset = std::is_integral<Representation>::value ? 0 : 1 + length / 2;
   
   static constexpr Representation
   cache( int power ){
-    return Exponentation< Representation, N - 1, N, Rest... >::cache( power );
+    auto hackIterator =
+      &( std::get<0>( cachedPowers< Representation, length, offset > ) );
+    return hackIterator[power + offset];
   }
 };
-
-template< typename Representation, int... Rest >
-struct Exponentation< Representation, 0, Rest... > {
-  static constexpr int offset =
-    std::is_integral<Representation>::value ? 0 : 1 + sizeof...(Rest) / 2;
-  
-  static constexpr Representation
-  value[] = { disco::pow( Representation(10), -offset ), disco::pow( Representation(10), Rest - offset)... };
-
-  static constexpr Representation
-  cache( int power ){
-    return value[power + offset];
-  }
-};
-
-template< typename Representation, int... Rest >
-constexpr Representation Exponentation< Representation, 0, Rest... >::value[];
 
 template< typename Representation >
 using realExponentiation = Exponentation< Representation, 615 >;
 
 template< typename Representation >
+constexpr int
+maxOrder = noDigits( std::numeric_limits< Representation >::max() ) - 1;
+
+template< typename Representation >
 using integerExponentiation =
-  Exponentation< Representation,
-                 int( noDigits( std::numeric_limits< Representation >::max() ) - 1 ) >;
+  Exponentation< Representation, maxOrder<Representation> >;
 
 }
