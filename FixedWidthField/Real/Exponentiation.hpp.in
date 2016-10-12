@@ -5,7 +5,7 @@ constexpr auto generateCache(){
   std::array< Representation, length > partialCache{};
   auto hackIterator = &( std::get<0>(partialCache) );
   for ( int index = 0; index < length; ++index ){
-    hackIterator[index] = disco::pow( Representation(10), index - offset );
+    *hackIterator++  = disco::pow( Representation(10), index - offset );
   }
   return partialCache;
 }
@@ -20,9 +20,7 @@ struct Exponentation {
   
   static constexpr Representation
   cache( int power ){
-    auto hackIterator =
-      &( std::get<0>( cachedPowers< Representation, length, offset > ) );
-    return hackIterator[power + offset];
+    return cachedPowers< Representation, length, offset >[power + offset];
   }
 };
 

@@ -73,7 +73,7 @@ SCENARIO("Record read", "[Record], [read]"){
     Record< Scientific< 11, 4 >,
             Scientific< 11, 4 >,
             Scientific< 11, 4 >,
-            Scientific< 11, 4 > >::read( sourceIt, end, *it++, *it++, *it++, *it++ );
+            Scientific< 11, 4 > >::read( sourceIt, end, it[0], it[1], it[2], it[3] );
     REQUIRE( sink[0] == 1 );
     REQUIRE( sink[1] == 2 );
     REQUIRE( sink[2] == 3 );
@@ -88,7 +88,7 @@ SCENARIO("Record read", "[Record], [read]"){
     Record< Scientific< 11, 4 >,
             Scientific< 11, 4 >,
             Scientific< 11, 4 >,
-            Scientific< 11, 4 > >::read( sourceIt, end, *it++, *it++, *it++ );
+            Scientific< 11, 4 > >::read( sourceIt, end, it[0], it[1], it[2] );
     REQUIRE( sink[0] == 1 );
     REQUIRE( sink[1] == 2 );
     REQUIRE( sink[2] == 3 );
