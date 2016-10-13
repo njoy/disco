@@ -1,9 +1,9 @@
 template< typename T, typename Iterator, bool trust = true >
 static T
 read( Iterator& it, const Iterator& end ){
-  using Signedness = typename utility::TypeSwitch
-                                       < Signed, Unsigned,
-                                         std::is_signed< T >::value >::type;
+  using Signedness =
+    std::conditional_t< std::is_signed< T >::value, Signed, Unsigned >;
+  
   FixedWidthField_::verifyWidth_( it, end, TrustTag< trust >() );
   auto position = FixedWidthField_::skipPad( it );
 

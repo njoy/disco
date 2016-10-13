@@ -15,9 +15,8 @@ struct Integer : public FixedWidthField< w >{
   struct WithoutPadding{};
 
   using ZeroPaddingPolicy =
-    typename utility::TypeSwitch
-             < WithoutPadding, WithPadding,
-               m == std::numeric_limits<uint16_t>::max() >::type;
+    std::conditional_t< m == std::numeric_limits<uint16_t>::max(),
+                        WithoutPadding, WithPadding >;
   
   /* methods */
 #include "disco/FixedWidthField/Integer/src/read.hpp"
