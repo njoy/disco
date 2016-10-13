@@ -32,7 +32,6 @@ int main(){
   
   assert( myDouble == 1.0 );
   assert( myInt == 1000 );
-  assert( myString == "Hello" )l
-
+  assert( myString == "Hello" );
 }
 ```
