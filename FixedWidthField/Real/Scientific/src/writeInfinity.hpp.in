@@ -1,6 +1,6 @@
 template< typename Iterator >
 static void
-writeInfinity( Iterator& it, bool isNegative, typename Real_::Full ){
+writeInfinity( Iterator& it, bool isNegative, typename Real_t::Full ){
   auto remainingBlanks = w - 8;
   while ( --remainingBlanks > 0 ){
     *it++ = ' ';
@@ -22,7 +22,7 @@ writeInfinity( Iterator& it, bool isNegative, typename Real_::Full ){
 
 template< typename Iterator >
 static void
-writeInfinity( Iterator& it, bool isNegative, typename Real_::Partial ){
+writeInfinity( Iterator& it, bool isNegative, typename Real_t::Partial ){
   auto remainingBlanks = int(w) - 3;
   if (  (remainingBlanks - isNegative) < 0 ){
     writeInvalid( it );
@@ -44,8 +44,8 @@ writeInfinity( Iterator& it, bool isNegative, typename Real_::Partial ){
 template< typename Iterator >
 static void
 writeInfinity
-( Iterator& it, bool isNegative, typename Real_::PartialNegative ){
+( Iterator& it, bool isNegative, typename Real_t::PartialNegative ){
   isNegative ?
-    writeInfinity( it, isNegative, typename Real_::Partial() ) :
-    writeInfinity( it, isNegative, typename Real_::Full() );
+    writeInfinity( it, isNegative, typename Real_t::Partial() ) :
+    writeInfinity( it, isNegative, typename Real_t::Full() );
 }

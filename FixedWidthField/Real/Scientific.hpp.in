@@ -3,20 +3,22 @@ namespace disco {
 template< uint16_t w, uint16_t d, uint16_t e >
 struct Scientific : public Real< w > {
 
-  using Real_ = Real< w >;
-  using MayConsumeExponent = typename Real_::MayConsumeExponent;
-  using MayNotConsumeExponent = typename Real_::MayNotConsumeExponent;
+  using Real_t = Real< w >;
+  using MayConsumeExponent = typename Real_t::MayConsumeExponent;
+  using MayNotConsumeExponent = typename Real_t::MayNotConsumeExponent;
 
   using InfinityPrintingPolicy =
-    typename utility::TypeSwitch
-             < typename Real_::Full, typename utility::TypeSwitch
-               < typename Real_::Partial, typename Real_::PartialNegative,
-                 ( w < 8 ) >::type, ( w > 8 ) >::type;
+    std::conditional_t
+    < (w > 8 ),
+      typename Real_t::Full,
+      std::conditional_t
+      < ( w < 8 ),
+        typename Real_t::Partial,
+        typename Real_t::PartialNegative > >;
   
   using ExponentPolicy =
-    typename utility::TypeSwitch
-             < MayConsumeExponent, MayNotConsumeExponent,
-               e == std::numeric_limits< uint16_t >::max() >::type;
+    std::conditional_t< e == std::numeric_limits< uint16_t >::max(),
+                        MayConsumeExponent, MayNotConsumeExponent >;
 
   static constexpr int exponentDigits =
     ( e == std::numeric_limits< uint16_t >::max() ) ? 2 : e;
@@ -33,7 +35,7 @@ struct Scientific : public Real< w > {
     return ( int(w) - d - exponentDigits - 4 - ( real < 0 ) ) < 0;
   }
 
-  using Real_::write;
+  using Real_t::write;
   
 #include "disco/FixedWidthField/Real/Scientific/src/write.hpp" 
 #include "disco/FixedWidthField/Real/Scientific/src/writeWithoutConsumption.hpp" 

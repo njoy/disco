@@ -1,7 +1,5 @@
 #include <type_traits>
 
-#include "utility/TypeSwitch.hpp"
-
 namespace disco{
 
 template< uint16_t w >
@@ -14,15 +12,12 @@ struct FixedWidthField {
   /* convenience typedefs */
   template< typename T >
   using ArgumentType =
-    typename utility::TypeSwitch
-             < T, typename std::add_const
-                           < typename std::add_lvalue_reference
-                                      < T >::type >::type,
-               std::is_trivially_copyable< T >::value >::type;
+    std::conditional_t
+    < std::is_trivially_copyable< T >::value,
+      T, std::add_const_t < std::add_lvalue_reference_t< T > > >;
 
   template< bool trust >
-  using TrustTag = typename utility::TypeSwitch
-                            < Trusted, NotTrusted, trust >::type;
+  using TrustTag = std::conditional_t< trust, Trusted, NotTrusted >;
 
   /* helper methods */
   template< typename Iterator >
@@ -36,19 +31,13 @@ struct FixedWidthField {
   }
   
   constexpr static bool
-  isSpace( const char c ){
-    return c == ' ' || c == '\t';
-  }
+  isSpace( const char c ){ return c == ' ' || c == '\t'; }
 
   constexpr static bool
-  isNewline( const char c ){
-    return c == '\n' || c == '\f' || c == '\r';
-  }
+  isNewline( const char c ){ return c == '\n' || c == '\f' || c == '\r'; }
 
   constexpr static bool
-  isEOF( const char c ){
-    return c == std::char_traits<char>::eof();
-  }
+  isEOF( const char c ){ return c == std::char_traits<char>::eof(); }
 
 #include "disco/FixedWidthField/src/skipPad.hpp"
   
