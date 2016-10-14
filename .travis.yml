@@ -3,29 +3,19 @@ sudo: required
 script: ./.travis/build.sh
 git:
   submodules: false
-  
-sources: &sources
-  - sourceline: "deb http://apt.llvm.org/precise/ llvm-toolchain-precise main"
-  - key_url : "http://apt.llvm.org/llvm-snapshot.gpg.key"
-  - ubuntu-toolchain-r-test
-  - george-edison55-precise-backports
-
-packages: &packages
-  - gcc-6
-  - clang-3.8
-  - cmake
-  - cmake-data
-
-base_configuration: &base_configuration
-  - build_type="debug"
-  - build_type="release"
-  - build_type="debug" static_libraries="TRUE"
-  - build_type="release" static_libraries="TRUE"
 
 addons:
   apt:
-    sources: *source
-    packages: *packages
+    sources:
+      - sourceline: "deb http://apt.llvm.org/precise/ llvm-toolchain-precise main"
+        key_url : "http://apt.llvm.org/llvm-snapshot.gpg.key"
+      - ubuntu-toolchain-r-test
+      - george-edison55-precise-backports
+    packages:
+      - gcc-6
+      - clang-3.8
+      - cmake
+      - cmake-data
   
 matrix:
   include:
@@ -33,7 +23,11 @@ matrix:
       compiler: gcc
       env:
         global: VERSION=6
-        matrix: *base_configuration
+        matrix: &base_configuration
+          - build_type="debug"
+          - build_type="release"
+          - build_type="debug" static_libraries="TRUE"
+          - build_type="release" static_libraries="TRUE"
     - os: linux
       compiler: gcc
       env: VERSION=6 build_type=coverage
