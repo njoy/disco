@@ -16,9 +16,10 @@ addons:
 git:
   submodules: false
 env:
+  global:
   matrix:
-    - [CC="gcc", CXX="g++", VERSION=6]
-    - [CC="clang", CXX="clang++", VERSION=3.8]
+    - CC="gcc" CXX="g++" VERSION=6
+    - CC="clang" CXX="clang++" VERSION=3.8
     - build_type="debug"
     - build_type="release"
     - static_libraries="TRUE"
