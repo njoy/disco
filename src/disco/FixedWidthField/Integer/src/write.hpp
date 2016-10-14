@@ -1,7 +1,7 @@
 template< typename Representation >
 static Representation
 abs( Representation integer, std::true_type ){
-  return std::abs( integer );
+  return integer < 0 ? -integer : integer;
 }
 
 template< typename Representation >

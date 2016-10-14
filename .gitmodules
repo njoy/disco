@@ -1,9 +1,4 @@
-[submodule "commonCMakeScripts"]
-	path = commonCMakeScripts
-	url = https://github.com/njoy/commonCMakeScripts.git
-[submodule "Catch"]
-	path = Catch
-	url = https://github.com/njoy/Catch.git
-[submodule "utility"]
-	path = utility
-	url = https://github.com/njoy/utility.git
+
+[submodule "dependencies/catch-adapter"]
+	path = dependencies/catch-adapter
+	url = https://github.com/apmccartney/catch-adapter.git

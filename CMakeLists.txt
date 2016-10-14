@@ -1,53 +1,136 @@
-cmake_minimum_required( VERSION 3.2 )
+cmake_minimum_required( VERSION 3.2 ) 
 
-set(projectName "disco")
-set(projectVersion "0.5.0")
+if( NOT DEFINED build_type )
+    set ( build_type "debug" )
+endif()
 
-if(NOT DEFINED commonCMakeScripts_path)
-  set(commonCMakeScripts_path "${CMAKE_SOURCE_DIR}/commonCMakeScripts")
-endif(NOT DEFINED commonCMakeScripts_path)
+if( NOT DEFINED disco_build_type )
+    set( disco_build_type "${build_type}" )
+endif()
 
-set_property(GLOBAL PROPERTY ${projectName}_HEADER_ONLY TRUE )
+if( NOT DEFINED static_libraries )
+    set( build_static_libraries FALSE )
+else()
+    set( build_static_libraries TRUE )
+endif()
 
-include(subprojects.cmake)
-include(${commonCMakeScripts_path}/base.cmake)
-include(${commonCMakeScripts_path}/doxygen.cmake)
+project( disco VERSION 0.0.1 LANGUAGES CXX )
 
-# create the utility build tree header directory and immediate children if necessary
-if(NOT(EXISTS "${disco_HEADER_DIR}/FixedWidthField"))
-  file(MAKE_DIRECTORY "${disco_HEADER_DIR}/FixedWidthField")
-endif(NOT(EXISTS "${disco_HEADER_DIR}/FixedWidthField"))
+if( NOT DEFINED is_subproject )
+    set( is_subproject )
+    add_subdirectory( subprojects/catch-adapter )
+    unset( is_subproject )
+endif()
 
-# Initialize a variable for collecting utility implementation components
-list(APPEND ${projectName}_src) # (empty list)
-list(APPEND ${projectName}_src_headers) # (empty list)
-list(APPEND ${projectName}_bin_headers) # (empty list)
+if( NOT DEFINED is_subproject )
+    if( DEFINED CXX_compiler_flags )
+        if( ( NOT DEFINED disco_compiler_flags ) AND ( NOT DEFINED disco_use_default_compiler_flags ) )
+            set( disco_compiler_flags "${CXX_compiler_flags}" )
+        endif()
+    endif()
+    if( NOT DEFINED disco_compiler_flags )
+        if( DEFINED no_link_time_optimization )
+            set( no_link_time_optimization TRUE )
+        endif()
+        if( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" )
+            if( ${disco_build_type} STREQUAL "debug" )
+                set( disco_compiler_flags "-Wall -Wextra -Wpedantic -Werror -g -gdwarf-3 -std=c++14" )
+            elseif( ${disco_build_type} STREQUAL "coverage" )
+                set( disco_compiler_flags "-Wall -Wextra -Wpedantic -Werror -g -gdwarf-3 -fprofile-arcs -ftest-coverage -fno-inline -std=c++14" )
+            elseif( ${disco_build_type} STREQUAL "release" )
+                set( disco_compiler_flags "-Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -std=c++14" )
+                if( NOT DEFINED no_link_time_optimization )
+                    set( disco_compiler_flags "${disco_compiler_flags} -flto" )
+                endif()
+            elseif( ${disco_build_type} STREQUAL "native" )
+                set( disco_compiler_flags "-Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -march=native -std=c++14" )
+                if( NOT DEFINED no_link_time_optimization )
+                    set( disco_compiler_flags "${disco_compiler_flags} -flto" )
+                endif()
+            endif()
+        elseif( CMAKE_CXX_COMPILER_ID STREQUAL "Clang" )
+            if( ${disco_build_type} STREQUAL "debug" )
+                set( disco_compiler_flags "-Wall -Wextra -Wpedantic -Werror -g -gdwarf-3 -std=c++14" )
+            elseif( ${disco_build_type} STREQUAL "coverage" )
+                set( disco_compiler_flags "-Wall -Wextra -Wpedantic -Werror -g -gdwarf-3 -fprofile-arcs -ftest-coverage -fno-inline -std=c++14" )
+            elseif( ${disco_build_type} STREQUAL "release" )
+                set( disco_compiler_flags "-Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -std=c++14" )
+                if( NOT DEFINED no_link_time_optimization )
+                    set( disco_compiler_flags "${disco_compiler_flags} -flto" )
+                endif()
+            elseif( ${disco_build_type} STREQUAL "native" )
+                set( disco_compiler_flags "-Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -march=native -std=c++14" )
+                if( NOT DEFINED no_link_time_optimization )
+                    set( disco_compiler_flags "${disco_compiler_flags} -flto" )
+                endif()
+            endif()
+        elseif( CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" )
+            if( ${disco_build_type} STREQUAL "debug" )
+                set( disco_compiler_flags "-Wall -Wextra -Wpedantic -Werror -g -gdwarf-3 -std=c++14" )
+            elseif( ${disco_build_type} STREQUAL "coverage" )
+                set( disco_compiler_flags "-Wall -Wextra -Wpedantic -Werror -g -gdwarf-3 -fprofile-arcs -ftest-coverage -fno-inline -std=c++14" )
+            elseif( ${disco_build_type} STREQUAL "release" )
+                set( disco_compiler_flags "-Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -std=c++14" )
+                if( NOT DEFINED no_link_time_optimization )
+                    set( disco_compiler_flags "${disco_compiler_flags} -flto" )
+                endif()
+            elseif( ${disco_build_type} STREQUAL "native" )
+                set( disco_compiler_flags "-Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -march=native -std=c++14" )
+                if( NOT DEFINED no_link_time_optimization )
+                    set( disco_compiler_flags "${disco_compiler_flags} -flto" )
+                endif()
+            endif()
+        else()
+            message( WARNING "Compiler vendor not recognized. No compilation flags set" )
+        endif()
+    endif()
+    if( DEFINED appended_flags AND NOT disco_no_appended_flags )
+        set( disco_compiler_flags "${disco_compiler_flags} ${appended_flags}" )
+    endif()
+    if( DEFINED disco_appended_flags )
+        set( disco_compiler_flags "${disco_compiler_flags} ${disco_appended_flags}" )
+    endif()
+endif()
 
-configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/disco.hpp.in"
-  "${HEADER_DIR}/disco.hpp"
-  COPYONLY
-  )
+execute_process(
+    COMMAND git rev-parse --abbrev-ref HEAD
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    OUTPUT_VARIABLE GIT_BRANCH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+execute_process(
+    COMMAND git rev-parse HEAD
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    OUTPUT_VARIABLE GIT_HASH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
 
-set(headers "")
-list(APPEND headers
-  "FixedWidthField"
-  "Record"
-  )
+message( STATUS "" )
+message( STATUS "-----------------------------------------------------------" )
+message( STATUS "" )
+message( STATUS "disco Version: 0.0.1" )
+message( STATUS "Git current branch: ${GIT_BRANCH}" )
+message( STATUS "Git commit hash: ${GIT_HASH}" )
+message( STATUS "" )
+if( NOT DEFINED is_subproject ) 
+    message( STATUS "disco flags: ${disco_compiler_flags}" ) 
+    message( STATUS "" ) 
+endif() 
+message( STATUS "-----------------------------------------------------------" ) 
+message( STATUS "" ) 
 
-foreach(header ${headers})
-  configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/${header}.hpp.in" 
-    "${disco_HEADER_DIR}/${header}.hpp"
-    COPYONLY
-    )
-endforeach(header)
+add_library( disco INTERFACE )
+target_include_directories( disco INTERFACE src )
+target_link_libraries( disco INTERFACE catch-adapter ) 
 
-# setup test labels
-list(APPEND testLabels disco)
-
-# traverse subdirectories
-add_subdirectory( "${CMAKE_CURRENT_SOURCE_DIR}/FixedWidthField" )
-add_subdirectory( "${CMAKE_CURRENT_SOURCE_DIR}/Record" )
-
-include(${commonCMakeScripts_path}/terminus.cmake)
+if( NOT DEFINED is_subproject ) 
+    enable_testing() 
+    add_subdirectory( src/disco/FixedWidthField/ColumnPosition/test ) 
+    add_subdirectory( src/disco/Record/test ) 
+    add_subdirectory( src/disco/FixedWidthField/Character/test ) 
+    add_subdirectory( src/disco/FixedWidthField/Real/FixedPoint/test ) 
+    add_subdirectory( src/disco/FixedWidthField/Integer/test ) 
+    add_subdirectory( src/disco/FixedWidthField/Real/test ) 
+    add_subdirectory( src/disco/FixedWidthField/Real/ENDF/test ) 
+    add_subdirectory( src/disco/FixedWidthField/Real/Scientific/test ) 
+endif() 

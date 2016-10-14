@@ -2,10 +2,9 @@
 #define DISCO_HPP
 
 #include <algorithm>
+#include <cmath>
 #include <cstdint>
 #include <limits>
-
-#include "easylogging++.h"
 
 namespace disco {
 
