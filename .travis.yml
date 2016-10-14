@@ -53,9 +53,9 @@ matrix:
     - os: linux
       compiler: clang
       env: appended_flags="-fsanitize=cfi -flto -fno-omit-frame-pointer"
-   exclude:
-      - os: osx
-        compiler: gcc
+  exclude:
+    - os: osx
+      compiler: gcc
 #       
 #       compiler: clang
 #       script: ./.travis/build.sh
