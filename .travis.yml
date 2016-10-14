@@ -24,7 +24,6 @@ matrix:
         global:
           -VERSION=6
         matrix:
-          - *base_configuration
           - build_type="coverage"
       addons:
         apt:
@@ -38,7 +37,6 @@ matrix:
         global:
           - VERSION=6
         matrix:
-          - *base_configuration
           - appended_flags="-fsanitize=address -fno-omit-frame-pointer"
           - appended_flags="-fsanitize=memory -fno-omit-frame-pointer"
           - appended_flags="-fsanitize=undefined -fno-omit-frame-pointer"
@@ -53,44 +51,6 @@ matrix:
             - *packages
             - clang-3.8
 
-             
-#             - ubuntu-toolchain-r-test
-#             - george-edison55-precise-backports
-#           
-#             - g++-6
-#             - cmake
-#             - cmake-data
-#       
-#       env:
-#         - CC="gcc"
-#         - CXX="g++"
-#         - VERSION=6
-#         - build_type="coverage"
-
-#     - os: linux
-
-#       addons:
-#         apt:
-#           sources:
-#             - ubuntu-toolchain-r-test
-#             - sourceline: 'deb http://apt.llvm.org/precise/ llvm-toolchain-precise-3.8 main'
-#               key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'        
-#             - george-edison55-precise-backports
-#           packages:
-#             - clang-3.8
-#             - cmake
-#             - cmake-data
-#       submodules: false
-#       env:
-#         global:
-#           - COMPILER=clang++-3.8
-#           - build_type="debug"
-#         matrix:
-#           - appended_flags="-fsanitize=address -fno-omit-frame-pointer"
-#           - appended_flags="-fsanitize=memory -fno-omit-frame-pointer"
-#           - appended_flags="-fsanitize=undefined -fno-omit-frame-pointer"
-#           - appended_flags="-fsanitize=cfi -flto -fno-omit-frame-pointer"
-        
 #     - os: osx
 #       osx_image: xcode8
 #       compiler: clang
