@@ -14,8 +14,9 @@ git:
 addons:
   apt:
     sources:
+      - sourceline: 'deb http://apt.llvm.org/precise/ llvm-toolchain-precise main'
+        key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
       - ubuntu-toolchain-r-test
-      - llvm-toolchain-precise
       - george-edison55-precise-backports
       
     packages:
