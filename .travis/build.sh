@@ -1,8 +1,8 @@
 #!/bin/bash
-if [ "$CC" = "gcc" ]; then; export VERSION=-6; fi;
-if [ "$CC" = "clang" ]; then; export VERSION=-3.8; fi;
+if [ "$CC" = "gcc" ]; then export VERSION=-6; fi;
+if [ "$CC" = "clang" ]; then export VERSION=-3.8; fi;
 
-if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then
+if [ "$TRAVIS_OS_NAME" = "linux" ]; then
   sudo update-alternatives --install /usr/bin/$CC $CC /usr/bin/$CC$VERSION 90 --slave /usr/bin/$CXX $CXX /usr/bin/$CC$VERSION
   sudo update-alternatives --config $CC
 fi
