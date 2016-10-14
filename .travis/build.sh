@@ -1,18 +1,10 @@
 #!/bin/bash
 
 if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then
-  echo "Running on linux"
-  if [ $CXX = "g++" ]
-  then 
-    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 90 --slave /usr/bin/g++ g++ /usr/bin/g++-6
-    sudo update-alternatives --config gcc
-  fi;
-  
-  if [ $CXX = "clang++" ]
-  then
-    sudo update-alternatives --install /usr/bin/clang clang $(which clang-3.8) 90 --slave /usr/bin/clang++ clang++ $(which clang-3.8)
-    sudo update-alternatives --config clang
-  fi;
+  sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 90 --slave /usr/bin/g++ g++ /usr/bin/g++-6
+  sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-3.8 90 --slave /usr/bin/clang++ clang++ /usr/bin/clang++-3.8  
+  sudo update-alternatives --config gcc
+  sudo update-alternatives --config clang
 fi
 
 ./fetch_subprojects.py
