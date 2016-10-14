@@ -1,6 +1,8 @@
 sudo: required
+
 git:
   submodules: false  
+
 addons:
   apt:
     sources:
@@ -15,11 +17,19 @@ addons:
       - cmake-data
 
 language: cpp
+
 compiler:
   - gcc
   - clang
 
+os:
+  - linux
+  - osx
+  
+osx_image: xcode8
+  
 script: ./.travis/build.sh
+
 env:
   - build_type="debug"
   - build_type="release"
@@ -33,14 +43,20 @@ matrix:
       env: build_type=coverage
     - os: linux
       compiler: clang
-      env:
-        - appended_flags="-fsanitize=address -fno-omit-frame-pointer"
-        - appended_flags="-fsanitize=memory -fno-omit-frame-pointer"
-        - appended_flags="-fsanitize=undefined -fno-omit-frame-pointer"
-        - appended_flags="-fsanitize=cfi -flto -fno-omit-frame-pointer"
- 
-#     - os: osx
-#       osx_image: xcode8
+      env: appended_flags="-fsanitize=address -fno-omit-frame-pointer"
+    - os: linux
+      compiler: clang
+      env: appended_flags="-fsanitize=memory -fno-omit-frame-pointer"
+    - os: linux
+      compiler: clang
+      env: appended_flags="-fsanitize=undefined -fno-omit-frame-pointer"
+    - os: linux
+      compiler: clang
+      env: appended_flags="-fsanitize=cfi -flto -fno-omit-frame-pointer"
+   exclude:
+      - os: osx
+        compiler: gcc
+#       
 #       compiler: clang
 #       script: ./.travis/build.sh
 #       env:
