@@ -1,20 +1,21 @@
 language: cpp
 sudo: required
-script: ./.travis/build.sh
-addons:
-  apt:
-    sources: &sources
-      - ubuntu-toolchain-r-test
-      - george-edison55-precise-backports
-    packages: &packages
-      - cmake
-      - cmake-data
 submodules: false
-env: &base_configuration
-  - build_type="debug"
-  - build_type="release"
-  - build_type="debug" static_libraries="TRUE"
-  - build_type="release" static_libraries="TRUE"
+script: ./.travis/build.sh
+
+sources: &sources
+  ? ubuntu-toolchain-r-test
+  ? george-edison55-precise-backports
+
+packages: &packages
+  ? cmake
+  ? cmake-data
+
+base_configuration: &base_configuration
+  ? build_type="debug"
+  ? build_type="release"
+  ? build_type="debug" static_libraries="TRUE"
+  ? build_type="release" static_libraries="TRUE"
 
 matrix:
   include:
@@ -24,31 +25,34 @@ matrix:
         global:
           -VERSION=6
         matrix:
-          - build_type="coverage"
+          << : *base_configuration
+          ? build_type="coverage"
       addons:
         apt:
-          sources: *source
+          sources:
+            << : *source
           packages:
-            - *packages
-            - g++-6
+            << : *packages
+            ? g++-6
     - os: linux
       compiler: clang
       env:
         global:
           - VERSION=6
         matrix:
-          - appended_flags="-fsanitize=address -fno-omit-frame-pointer"
-          - appended_flags="-fsanitize=memory -fno-omit-frame-pointer"
-          - appended_flags="-fsanitize=undefined -fno-omit-frame-pointer"
-          - appended_flags="-fsanitize=cfi -flto -fno-omit-frame-pointer"
+          << : *base_configuration
+          ? appended_flags="-fsanitize=address -fno-omit-frame-pointer"
+          ? appended_flags="-fsanitize=memory -fno-omit-frame-pointer"
+          ? appended_flags="-fsanitize=undefined -fno-omit-frame-pointer"
+          ? appended_flags="-fsanitize=cfi -flto -fno-omit-frame-pointer"
       addons:
         apt:
           sources:
-            - *source
-            - sourceline: 'deb http://apt.llvm.org/precise/ llvm-toolchain-precise-3.8 main'
+            << : *source
+            ? sourceline: 'deb http://apt.llvm.org/precise/ llvm-toolchain-precise-3.8 main'
               key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
-            - *packages
+            << : *packages
             - clang-3.8
 
 #     - os: osx
