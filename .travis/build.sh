@@ -7,6 +7,7 @@
 #  sudo update-alternatives --config clang
 #fi
 
+export CXX=$COMPILER
 ./fetch_subprojects.py
 mkdir build
 cd build
