@@ -25,6 +25,7 @@ env:
   - build_type="release"
   - build_type="debug" static_libraries="TRUE"
   - build_type="release" static_libraries="TRUE"
+
 matrix:
   include:
     - os: linux
@@ -33,12 +34,10 @@ matrix:
     - os: linux
       compiler: clang
       env:
-        global: VERSION=3.8
-        matrix:        
-          - appended_flags="-fsanitize=address -fno-omit-frame-pointer"
-          - appended_flags="-fsanitize=memory -fno-omit-frame-pointer"
-          - appended_flags="-fsanitize=undefined -fno-omit-frame-pointer"
-          - appended_flags="-fsanitize=cfi -flto -fno-omit-frame-pointer"
+        - appended_flags="-fsanitize=address -fno-omit-frame-pointer"
+        - appended_flags="-fsanitize=memory -fno-omit-frame-pointer"
+        - appended_flags="-fsanitize=undefined -fno-omit-frame-pointer"
+        - appended_flags="-fsanitize=cfi -flto -fno-omit-frame-pointer"
  
 #     - os: osx
 #       osx_image: xcode8
