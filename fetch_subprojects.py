@@ -45,7 +45,7 @@ def traverse_dependencies( destination, traversed ):
     return
   os.chdir( dependency_directory() )
 
-  for dependency in os.listdir() :
+  for dependency in os.listdir(os.getcwd()) :
     if os.path.isdir( dependency ) and not dependency in traversed :
         traversed.add( dependency )
         clone_submodule( dependency )
