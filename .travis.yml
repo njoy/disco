@@ -1,62 +1,47 @@
 language: cpp
-sudo: required
-
-os:
-  - linux
-
-compiler:
-  #- gcc
-  - clang
-
-git:
-    submodules: false
-  
-addons:
-  apt:
-    sources:
-      - sourceline: 'deb http://apt.llvm.org/precise/ llvm-toolchain-precise-3.8 main'
-        key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
-      - ubuntu-toolchain-r-test
-      - george-edison55-precise-backports
-      
-    packages:
-      - gcc-6
-      - g++-6
-      - clang-3.8
-      - binutils-gold
-      - cmake
-      - cmake-data
-
-env:
-  matrix:
-    - build_type="release" static_libraries="TRUE"
-    - build_type="release" static_libraries="FALSE"
-    - build_type="debug" static_libraries="TRUE"
-    - build_type="debug" static_libraries="FALSE"
 
 script: ./.travis/build.sh
 
 matrix:
-  - os: osx
-    osx_image: xcode8
-    compiler: clang
-    env: build_type="release"
-    
-  - os: osx
-    osx_image: xcode8
-    compiler: clang
-    env: build_type="release" static_libraries="TRUE"
-    
-  - os: osx
-    osx_image: xcode8
-    compiler: clang
-    env: build_type="debug"
+  include:
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - sourceline: 'deb http://apt.llvm.org/precise/ llvm-toolchain-precise-3.8 main'
+              key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
+            - ubuntu-toolchain-r-test
+            - george-edison55-precise-backports
+          packages:
+            - g++-6
+            - clang++-3.8
+            - cmake
+            - cmake-data
+      env:
+        matrix:
+          - CXX=g++-6 build_type="debug"
+          - CXX=g++-6 build_type="release"
+          - CXX=g++-6 build_type="release" static_libraries="TRUE"
+          - CXX=g++-6 build_type="debug" static_libraries="TRUE"
+          - CXX=clang++-3.8 build_type="debug"
+          - CXX=clang++-3.8 build_type="release"
+          - CXX=clang++-3.8 build_type="release" static_libraries="TRUE"
+          - CXX=clang++-3.8 build_type="debug" static_libraries="TRUE"
+          - CXX=g++-6 build_type="coverage"
+          - CXX=clang++-3.8 build_type="debug" appended_flags="-fsanitize=address -fno-omit-frame-pointer"
+          - CXX=clang++-3.8 build_type="debug" appended_flags="-fsanitize=memory -fno-omit-frame-pointer"
+          - CXX=clang++-3.8 build_type="debug" appended_flags="-fsanitize=undefined -fno-omit-frame-pointer"
+          - CXX=clang++-3.8 build_type="debug" appended_flags="-fsanitize=cfi -flto -fno-omit-frame-pointer"
+          
+      git:
+        submodules: false
 
   - os: osx
     osx_image: xcode8
     compiler: clang
-    env: build_type="debug" static_libraries="TRUE"
-    
-  - os: linux
-    compiler: gcc
-    env: build_type="coverage" 
+    env:
+      matrix:
+        - build_type="release"
+        - build_type="debug"
+        - build_type="release" static_libraries="TRUE"
+        - build_type="debug" static_libraries="TRUE"
