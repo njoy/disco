@@ -8,7 +8,6 @@ Minimal Example
 
 ```c++
 #include <assert.h>
-#include <string>
 #include "disco.hpp"
 
 using namespace disco;
