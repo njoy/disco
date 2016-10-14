@@ -1,0 +1,59 @@
+language: cpp
+sudo: required
+
+os:
+  - linux
+
+compiler:
+  - gcc
+
+git:
+    submodules: false
+  
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+      - llvm-toolchain-precise
+      - george-edison55-precise-backports
+      
+    packages:
+      - gcc-6
+      - g++-6
+      - binutils-gold
+      - cmake
+      - cmake-data
+
+env:
+  matrix:
+    - build_type="release" static_libraries="TRUE"
+    - build_type="release" static_libraries="FALSE"
+    - build_type="debug" static_libraries="TRUE"
+    - build_type="debug" static_libraries="FALSE"
+
+script: ./.travis/build.sh
+
+matrix:
+  - os: osx
+    osx_image: xcode8
+    compiler: clang
+    env: build_type="release"
+    
+  - os: osx
+    osx_image: xcode8
+    compiler: clang
+    env: build_type="release" static_libraries="TRUE"
+    
+  - os: osx
+    osx_image: xcode8
+    compiler: clang
+    env: build_type="debug"
+
+  - os: osx
+    osx_image: xcode8
+    compiler: clang
+    env: build_type="debug" static_libraries="TRUE"
+    
+  - os: linux
+    compiler: gcc
+    env: build_type="coverage" 
