@@ -1,9 +1,6 @@
-language: cpp
 sudo: required
-script: ./.travis/build.sh
 git:
-  submodules: false
-
+  submodules: false  
 addons:
   apt:
     sources:
@@ -16,26 +13,23 @@ addons:
       - clang-3.8
       - cmake
       - cmake-data
-  
+
+language: cpp
+compiler:
+  - gcc
+  - clang
+
+script: ./.travis/build.sh
+env:
+  - build_type="debug"
+  - build_type="release"
+  - build_type="debug" static_libraries="TRUE"
+  - build_type="release" static_libraries="TRUE"
 matrix:
   include:
     - os: linux
       compiler: gcc
-      env:
-        global: VERSION=6
-        matrix: &base_configuration
-          - build_type="debug"
-          - build_type="release"
-          - build_type="debug" static_libraries="TRUE"
-          - build_type="release" static_libraries="TRUE"
-    - os: linux
-      compiler: gcc
-      env: VERSION=6 build_type=coverage
-    - os: linux
-      compiler: clang
-      env:
-        global: VERSION=3.8
-        matrix: *base_configuration
+      env: build_type=coverage
     - os: linux
       compiler: clang
       env:
