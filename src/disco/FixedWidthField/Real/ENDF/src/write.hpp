@@ -10,7 +10,7 @@ write( Representation real, Iterator& it ){
   } else if ( isInvalid( real ) ){
     writeInvalid( it );
   } else {
-    std::array< char, w + 2 > buffer;
+    std::array< char, w + 3 > buffer;
     auto greedyExponent = requiresTwoDigitExponent( real );
     const auto length = w + 2;
     const auto decimalDigits = 6 - greedyExponent;
