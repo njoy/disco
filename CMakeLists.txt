@@ -11,7 +11,7 @@ endif()
 if( NOT DEFINED static_libraries )
     set( build_static_libraries FALSE )
 else()
-    set( build_static_libraries TRUE )
+    set( build_static_libraries "${static_libraries}" )
 endif()
 
 project( disco VERSION 0.0.1 LANGUAGES CXX )
