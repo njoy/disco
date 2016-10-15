@@ -1,10 +1,11 @@
 #!/bin/bash
-if [ "$CC" = "gcc" ]; then export VERSION=-6; fi;
-if [ "$CC" = "clang" ]; then export VERSION=-3.8; fi;
 
 if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-  sudo update-alternatives --install /usr/bin/$CC $CC /usr/bin/$CC$VERSION 90 --slave /usr/bin/$CXX $CXX /usr/bin/$CXX$VERSION
-  sudo update-alternatives --config $CC
+  sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 90 --slave /usr/bin/g++ g++ /usr/bin/g++-6
+  sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-3.8 90 --slave /usr/bin/clang++ clang++ /usr/bin/clang++-3.8
+  sudo update-alternatives --config gcc
+  sudo update-alternatives --config clang
+  export PATH=/usr/bin:$PATH
 fi
 
 ./fetch_subprojects.py

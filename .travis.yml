@@ -46,7 +46,7 @@ matrix:
       env: appended_flags="-fsanitize=address -fno-omit-frame-pointer"
     - os: linux
       compiler: clang
-      env: appended_flags="-fsanitize=memory -fno-omit-frame-pointer"
+      env: appended_flags="-fsanitize=memory -fPIE -pie -fno-omit-frame-pointer"
     - os: linux
       compiler: clang
       env: appended_flags="-fsanitize=undefined -fno-omit-frame-pointer"
