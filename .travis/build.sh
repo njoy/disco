@@ -11,6 +11,8 @@ if [ "$TRAVIS_OS_NAME" = "linux" ]; then
   if [ "$CXX" = "clang++" ]; then
     sudo ln -sf /usr/lib/llvm-3.8/lib/LLVMgold.so /usr/lib/LLVMgold.so
     sudo bash -c "echo /usr/lib/llvm-3.8/lib >> /etc/ld.so.conf"
+    cat /etc/ld.so.conf
+    ls /usr/lib/llvm-3.8/lib
     sudo ldconfig
     export appended_flags=$appended_flags"-stdlib=libstdc++ -B/usr/lib/gold-ld"
   fi;
