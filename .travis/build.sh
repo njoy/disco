@@ -7,12 +7,7 @@ if [ "$TRAVIS_OS_NAME" = "linux" ]; then
   sudo update-alternatives --config clang
   export PATH=/usr/bin:$PATH
   if [ "$CXX" = "clang++" ]; then
-    #find / -iname LLVMgold.so
-    #sudo ln -sf /usr/lib/llvm-3.4/lib/LLVMgold.so /usr/lib/LLVMgold.so
-    sudo bash -c "echo /usr/lib >> /etc/ld.so.conf"
-    cat /etc/ld.so.conf
-    #ls /usr/lib/llvm-3.4/lib
-    sudo ldconfig
+    sudo ln -sf /usr/lib/LLVMgold.so /usr/lib/llvm-3.8/lib/LLVMgold.so 
     export appended_flags=$appended_flags"-stdlib=libstdc++ -B/usr/lib/gold-ld"
   fi;
 fi
