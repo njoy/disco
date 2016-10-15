@@ -13,6 +13,7 @@ addons:
     packages:
       - g++-6
       - clang-3.8
+      - llvm-3.8
       - cmake
       - cmake-data
 
@@ -43,13 +44,13 @@ matrix:
       env: build_type=coverage
     - os: linux
       compiler: clang
-      env: appended_flags="-fsanitize=address -fno-omit-frame-pointer"
+      env: appended_flags="-fsanitize=address -fno-omit-frame-pointer "
     - os: linux
       compiler: clang
-      env: appended_flags="-fsanitize=memory -fPIE -pie -fno-omit-frame-pointer"
+      env: appended_flags="-fsanitize=memory -fPIE -pie -fno-omit-frame-pointer "
     - os: linux
       compiler: clang
-      env: appended_flags="-fsanitize=undefined -fsanitize=integer -fno-omit-frame-pointer"
+      env: appended_flags="-fsanitize=undefined -fsanitize=integer -fno-omit-frame-pointer "
   exclude:
     - os: osx
       compiler: gcc
