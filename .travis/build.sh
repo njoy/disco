@@ -21,7 +21,7 @@ mkdir build
 cd build
 cmake -D build_type=$build_type \
       -D static_libraries=$static_libraries \
-      -D appended_flags=$appended_flags ..
+      -D appended_flags="$appended_flags" ..
 make -j2
 export COMPILATION_FAILURE=$?
 ctest --output-on-failure -j2
