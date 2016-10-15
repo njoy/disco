@@ -1,5 +1,4 @@
 sudo: required
-dist: trusty
 
 git:
   submodules: false  
@@ -43,15 +42,15 @@ matrix:
     - os: linux
       compiler: gcc
       env: build_type=coverage
-     - os: linux
-       compiler: clang
-       env: appended_flags="-fsanitize=address -fno-omit-frame-pointer "
-     - os: linux
-       compiler: clang
-       env: appended_flags="-fsanitize=memory -fPIE -pie -fno-omit-frame-pointer "
-     - os: linux
-       compiler: clang
-       env: appended_flags="-fsanitize=undefined -fsanitize=integer -fno-omit-frame-pointer "
-   exclude:
-     - os: osx
-       compiler: gcc
+    - os: linux
+      compiler: clang
+      env: appended_flags="-fsanitize=address -fno-omit-frame-pointer "
+    - os: linux
+      compiler: clang
+      env: appended_flags="-fsanitize=memory -fPIE -pie -fno-omit-frame-pointer "
+    - os: linux
+      compiler: clang
+      env: appended_flags="-fsanitize=undefined -fsanitize=integer -fno-omit-frame-pointer "
+  exclude:
+    - os: osx
+      compiler: gcc
