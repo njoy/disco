@@ -23,7 +23,7 @@ def clone_submodule( relative_path ):
   invocation = [ "git", "submodule", "update", "--init", "--", relative_path ]
   if os.name == "nt":
     invocation.insert( 0, "powershell" )
-  subprocess.Popen( invocation )
+  subprocess.call( invocation )
 
 def update_repository():
   """
@@ -34,7 +34,7 @@ def update_repository():
   invocation = ["git", "pull", "origin", "master"]
   if os.name == "nt":
     invocation.insert( 0, "powershell" )
-  subprocess.Popen( invocation )
+  subprocess.call( invocation )
   
 def traverse_dependencies( destination, traversed ):
   """
