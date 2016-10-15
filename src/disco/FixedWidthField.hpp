@@ -1,5 +1,3 @@
-#include <type_traits>
-
 namespace disco{
 
 template< uint16_t w >
