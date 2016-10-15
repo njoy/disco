@@ -9,7 +9,7 @@ if [ "$TRAVIS_OS_NAME" = "linux" ]; then
   sudo update-alternatives --config clang
   export PATH=/usr/bin:$PATH
   if [ "$CXX" = "clang++" ]; then
-    export appended_flags="-stdlib=libstdc++ -I/usr/include/c++/6"
+    export appended_flags="-stdlib=libstdc++"
   fi;
 fi
 
