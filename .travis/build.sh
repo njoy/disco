@@ -5,11 +5,10 @@ if [ "$TRAVIS_OS_NAME" = "linux" ]; then
   sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-3.8 90 --slave /usr/bin/clang++ clang++ /usr/bin/clang++-3.8
   sudo update-alternatives --config gcc
   sudo update-alternatives --config clang
-  export PATH=/usr/bin:$PATH
   if [ "$CXX" = "clang++" ]; then
-      sudo ln -sf /usr/lib/LLVMgold.so /usr/lib/llvm-3.8/lib/LLVMgold.so
-      sudo ln -sf /usr/lib/libLTO.so /usr/lib/llvm-3.8/lib/libLTO.so
-    export appended_flags=$appended_flags"-stdlib=libstdc++ -B/usr/lib/gold-ld"
+    export appended_flags=$appended_flags"-stdlib=libstdc++"
+    export PATH=/usr/bin:$PATH
+    export NOPE='no_link_time_optimization=""'
   fi;
 fi
 
@@ -18,7 +17,8 @@ mkdir build
 cd build
 cmake -D build_type=$build_type \
       -D static_libraries=$static_libraries \
-      -D appended_flags="$appended_flags" ..
+      -D appended_flags="$appended_flags" \
+      $NOPE ..
 make -j2
 export COMPILATION_FAILURE=$?
 ctest --output-on-failure -j2

@@ -21,28 +21,28 @@ addons:
 language: cpp
 
 compiler:
-#  - gcc
+  - gcc
   - clang
 
 os:
   - linux
-#  - osx
+  - osx
   
-#osx_image: xcode8
+osx_image: xcode8
   
 script: ./.travis/build.sh
 
 env:
-#  - build_type="debug"
+  - build_type="debug"
   - build_type="release"
-#  - build_type="debug" static_libraries="TRUE"
-#  - build_type="release" static_libraries="TRUE"
+  - build_type="debug" static_libraries="TRUE"
+  - build_type="release" static_libraries="TRUE"
 
-# matrix:
-#   include:
-#     - os: linux
-#       compiler: gcc
-#       env: build_type=coverage
+matrix:
+  include:
+    - os: linux
+      compiler: gcc
+      env: build_type=coverage
 #     - os: linux
 #       compiler: clang
 #       env: appended_flags="-fsanitize=address -fno-omit-frame-pointer "
