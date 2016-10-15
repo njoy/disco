@@ -11,6 +11,7 @@ environment:
     MINGW_ARCHIVE: x86_64-6.1.0-release-win32-seh-rt_v5-rev1.7z
 
 install:
+  - cinst python
   - if not exist "%MINGW_ARCHIVE%" appveyor DownloadFile "%MINGW_URL%" -FileName "%MINGW_ARCHIVE%"
   - 7z x -y "%MINGW_ARCHIVE%" > nul
   # CMake refuses to generate MinGW Makefiles if sh.exe is in the Path
