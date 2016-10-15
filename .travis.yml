@@ -6,7 +6,7 @@ git:
 addons:
   apt:
     sources:
-      - sourceline: "deb http://apt.llvm.org/precise/ llvm-toolchain-precise main"
+      - sourceline: "deb http://apt.llvm.org/precise/ llvm-toolchain-precise-3.8 main"
         key_url : "http://apt.llvm.org/llvm-snapshot.gpg.key"
       - ubuntu-toolchain-r-test
       - george-edison55-precise-backports
@@ -49,10 +49,7 @@ env:
 #       env: appended_flags="-fsanitize=memory -fPIE -pie -fno-omit-frame-pointer"
 #     - os: linux
 #       compiler: clang
-#       env: appended_flags="-fsanitize=undefined -fno-omit-frame-pointer"
-#     - os: linux
-#       compiler: clang
-#       env: appended_flags="-fsanitize=cfi -flto -fno-omit-frame-pointer"
+#       env: appended_flags="-fsanitize=undefined -fsanitize=integer -fno-omit-frame-pointer"
 #   exclude:
 #     - os: osx
 #       compiler: gcc
