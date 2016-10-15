@@ -15,7 +15,6 @@ addons:
       - clang-3.8
       - cmake
       - cmake-data
-      - libc++
 
 language: cpp
 
