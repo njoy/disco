@@ -34,7 +34,7 @@ def update_repository():
   invocation = ["git", "pull", "origin", "master"]
   if os.name == "nt":
     invocation.insert( 0, "powershell" )
-  subprocess.peopen( invocation )
+  subprocess.Popen( invocation )
   
 def traverse_dependencies( destination, traversed ):
   """
