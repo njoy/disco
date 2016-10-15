@@ -6,9 +6,9 @@ if [ "$TRAVIS_OS_NAME" = "linux" ]; then
   sudo update-alternatives --config gcc
   sudo update-alternatives --config clang
   export PATH=/usr/bin:$PATH
-  if [ "$CXX" = "clang++" ]; then
+#  if [ "$CXX" = "clang++" ]; then
       #export appended_flags="-stdlib=libstdc++"
-  fi;
+#  fi;
 fi
 
 ./fetch_subprojects.py
