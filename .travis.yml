@@ -12,7 +12,6 @@ addons:
       - george-edison55-precise-backports
     packages:
       - g++-6
-      - gcov-6
       - clang-3.8
       - llvm-dev
       - cmake
