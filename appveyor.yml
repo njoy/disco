@@ -1,21 +1,19 @@
-version: '{build}'
- 
 cache:
 - x86_64-6.1.0-release-win32-seh-rt_v5-rev1.7z
 
 environment:
-  CTEST_OUTPUT_ON_FAILURE: 1
-  PYTHON: "C:\\Python34-x64"
-  PYTHON_VERSION: "3.4.x"
-  PYTHON_ARCH: "64"
-  MINGW_DIR: mingw64
-  MINGW_URL: https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/6.1.0/threads-win32/seh/x86_64-6.1.0-release-win32-seh-rt_v5-rev1.7z/download
-  MINGW_ARCHIVE: x86_64-6.1.0-release-win32-seh-rt_v5-rev1.7z
+  machine_user: test_user
+  machine_pass: Pass@word1
+  mingw_directory: mingw64
+  mingw_url: "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/6.1.0/threads-win32/seh/x86_64-6.1.0-release-win32-seh-rt_v5-rev1.7z/download"
+  mingw_archive: "x86_64-6.1.0-release-win32-seh-rt_v5-rev1.7z"
+  CTEST_OUTPUT_ON_FAILURE: 1  
 
 install:
+  - ps: net user /add $env:machine_user $env:machine_pass
+  - ps: net localgroup administrators $env:machine_user /add
   - if not exist "%MINGW_ARCHIVE%" appveyor DownloadFile "%MINGW_URL%" -FileName "%MINGW_ARCHIVE%"
   - 7z x -y "%MINGW_ARCHIVE%" > nul
-  # CMake refuses to generate MinGW Makefiles if sh.exe is in the Path
   - ps: Get-Command sh.exe -All | Remove-Item
 
 before_build:
@@ -23,8 +21,7 @@ before_build:
   - g++ --version
   - mingw32-make --version
   - cmake --version
-  - echo "NUMBER_OF_PROCESSORS=%NUMBER_OF_PROCESSORS%"
-  - ps: "%PYTHON%" ./fetch_subprojects.py
+  - ps: py -3 ./fetch_subprojects.py
   - ps: new-item -Name build -ItemType folder
   - ps: cd build  
   - cmake .. -G "MinGW Makefiles"
@@ -33,5 +30,4 @@ build_script:
   - cmake --build . --use-stderr --target all -- -j%NUMBER_OF_PROCESSORS%
 
 after_build:
-  - set Path=%WINDBG_DIR%;%Path%
   - cmake --build . --use-stderr --target test
