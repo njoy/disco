@@ -18,7 +18,7 @@ install:
 
 before_build:
 #  - set Path=%CD%\%mingw_directory%\bin;%Path%
-  - set Path=%mingw_directory%\bin;%Path%
+  - set Path=%mingw_directory%;%Path%
   - g++ --version
   - mingw32-make --version
   - cmake --version
