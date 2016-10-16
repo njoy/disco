@@ -12,12 +12,12 @@ environment:
 install:
   - ps: net user /add $env:machine_user $env:machine_pass
   - ps: net localgroup administrators $env:machine_user /add
-  - if not exist "%MINGW_ARCHIVE%" appveyor DownloadFile "%MINGW_URL%" -FileName "%MINGW_ARCHIVE%"
-  - 7z x -y "%MINGW_ARCHIVE%" > nul
+  - if not exist "%mingw_archive%" appveyor DownloadFile "%mingw_url%" -FileName "%mingw_archive%"
+  - 7z x -y "%mingw_archive%" > nul
   - ps: Get-Command sh.exe -All | Remove-Item
 
 before_build:
-  - set Path=%CD%\%MINGW_DIR%\bin;%Path%
+  - set Path=%CD%\%mingw_directory%\bin;%Path%
   - g++ --version
   - mingw32-make --version
   - cmake --version
