@@ -20,43 +20,43 @@ addons:
 language: cpp
 
 compiler:
-  - gcc
+#  - gcc
   - clang
 
 os:
-  - linux
-  - osx
+#  - linux
+#  - osx
   
 osx_image: xcode8
   
 script: ./.travis/build.sh
 
 env:
-  - build_type=debug static_libraries=FALSE
-  - build_type=release static_libraries=FALSE
-  - build_type=debug static_libraries=TRUE
-  - build_type=release static_libraries=TRUE
+#  - build_type=debug static_libraries=FALSE
+#  - build_type=release static_libraries=FALSE
+#  - build_type=debug static_libraries=TRUE
+#  - build_type=release static_libraries=TRUE
 
 matrix:
   include:
-    - os: linux
-      compiler: gcc
-      env: build_type=coverage static_libraries=FALSE
+  #   - os: linux
+  #     compiler: gcc
+  #     env: build_type=coverage static_libraries=FALSE
+  #   - os: linux
+  #     compiler: clang
+  #     env:
+  #       build_type=debug static_libraries=FALSE
+  #       appended_flags="-fsanitize=address -fno-omit-frame-pointer "
     - os: linux
       compiler: clang
       env:
-        build_type=debug static_libraries=FALSE
-        appended_flags="-fsanitize=address -fno-omit-frame-pointer "
-    - os: linux
-      compiler: clang
-      env:
-        build_type=debug static_libraries=FALSE
+        build_type=debug static_libraries=TRUE
         appended_flags="-fsanitize=memory -fPIE -fno-omit-frame-pointer "
-    - os: linux
-      compiler: clang
-      env:
-        build_type=debug static_libraries=FALSE
-        appended_flags="-fsanitize=undefined -fsanitize=integer -fno-omit-frame-pointer "
-  exclude:
-    - os: osx
-      compiler: gcc
+  #   - os: linux
+  #     compiler: clang
+  #     env:
+  #       build_type=debug static_libraries=FALSE
+  #       appended_flags="-fsanitize=undefined -fsanitize=integer -fno-omit-frame-pointer "
+  # exclude:
+  #   - os: osx
+  #     compiler: gcc
