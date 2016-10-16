@@ -8,7 +8,7 @@ if [ "$TRAVIS_OS_NAME" = "linux" ]; then
   if [ "$CXX" = "clang++" ]; then
     export appended_flags=$appended_flags"-stdlib=libstdc++"
     export PATH=/usr/bin:$PATH
-    export NOPE='no_link_time_optimization=""'
+    export NOPE='-D no_link_time_optimization=TRUE'
   fi;
 fi
 
