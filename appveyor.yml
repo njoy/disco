@@ -22,7 +22,7 @@ before_build:
   - cmake --version
   - ps: py -3 ./fetch_subprojects.py
   - ps: Get-Command sh.exe -All | Remove-Item
-  - ps: new-item -Name build -ItemType folder
+  - ps: new-item -Name build -ItemType directory
   - ps: cd build  
   - cmake .. -G "MinGW Makefiles"
 
