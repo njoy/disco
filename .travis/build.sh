@@ -27,7 +27,7 @@ if [ "$build_type" = "coverage" ]
 then
     pip install --user cpp-coveralls
     echo "loading coverage information"
-    coveralls  --exclude-pattern "/usr/include/.*|.*subprojects.*|.*dependencies.*|.*test\.cpp" --root ".." --build-root "." --gcov-options '\-lp'
+    coveralls  --exclude-pattern "/usr/include/.*|.*/CMakeFiles/.*|.*subprojects.*|.*dependencies.*|.*test\.cpp" --root ".." --build-root "." --gcov-options '\-lp'
 fi
 if [ $COMPILATION_FAILURE -ne 0 ] || [ $TEST_FAILURE -ne 0 ];
 then
