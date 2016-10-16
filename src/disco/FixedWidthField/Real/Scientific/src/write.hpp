@@ -19,13 +19,8 @@ write( Representation real, Iterator& it ){
 template< typename Representation, typename Iterator >
 static void
 write( Representation real, Iterator& it, MayNotConsumeExponent ){
-#ifdef __MINGW32__
-   const int requiredDigits =
-    Real_t::noDigits( std::ceil( std::abs( std::log10( std::abs( real ) ) ) ) ) - 1;
-#else
    const int requiredDigits =
     Real_t::noDigits( std::ceil( std::abs( std::log10( std::abs( real ) ) ) ) );
-#endif
   ( requiredDigits <= exponentDigits ) ? 
     writeWithoutConsumption( real, it, requiredDigits ) :
     writeInvalid( it );
