@@ -51,7 +51,7 @@ matrix:
       compiler: clang
       env:
         build_type=debug static_libraries=FALSE
-        appended_flags="-fsanitize=memory -fPIE -pie -fno-omit-frame-pointer "
+        appended_flags="-fsanitize=memory -fPIE -Wl,-pie -fno-omit-frame-pointer "
     - os: linux
       compiler: clang
       env:
