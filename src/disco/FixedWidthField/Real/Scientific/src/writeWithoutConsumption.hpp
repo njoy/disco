@@ -10,10 +10,11 @@ writeWithoutConsumption
   const auto exponentEnd = mantissaIt + consumedCharacters;
   auto exponentIt = exponentEnd - bufferExponentPositions - 2;
   const auto mantissaEnd = exponentIt;
+
+  int exponentDigitDifference = int( exponentDigits ) - bufferExponentPositions;
   #ifdef __MINGW32__
   exponentDigitDifference -= 1;
   #endif
-  int exponentDigitDifference = int( exponentDigits ) - bufferExponentPositions;
   while ( exponentDigitDifference++ < 0 ){ *it++ = ' '; }
   while ( exponentDigitDifference-- > 1 ){ ++mantissaIt; }
   while ( mantissaIt != mantissaEnd ){ *it++ = *mantissaIt++; }
