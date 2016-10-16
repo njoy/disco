@@ -14,7 +14,6 @@ install:
   - ps: net localgroup administrators $env:machine_user /add
   - if not exist "%mingw_archive%" appveyor DownloadFile "%mingw_url%" -FileName "%mingw_archive%"
   - 7z x -y "%mingw_archive%" > nul
-  - ps: Get-Command sh.exe -All | Remove-Item
 
 before_build:
   - set Path=%CD%\%mingw_directory%\bin;%Path%
@@ -22,6 +21,7 @@ before_build:
   - mingw32-make --version
   - cmake --version
   - ps: py -3 ./fetch_subprojects.py
+  - ps: Get-Command sh.exe -All | Remove-Item
   - ps: new-item -Name build -ItemType folder
   - ps: cd build  
   - cmake .. -G "MinGW Makefiles"
