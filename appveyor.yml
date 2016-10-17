@@ -24,7 +24,7 @@ before_build:
   - ps: Get-Command sh.exe -All | Remove-Item
   - ps: new-item -Name build -ItemType directory
   - ps: cd build  
-  - cmake .. -G "MinGW Makefiles" -D build_type=%BUILD_TYPE% -D static_libraries=%STATIC_LIBRARIES%
+  - cmake .. -G "MinGW Makefiles" -Dbuild_type=%BUILD_TYPE% -Dstatic_libraries=%STATIC_LIBRARIES%
 
 build_script:
   - cmake --build . --use-stderr --target all -- -j%NUMBER_OF_PROCESSORS%
