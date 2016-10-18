@@ -11,7 +11,7 @@ writeWithoutConsumption
   auto exponentIt = exponentEnd - bufferExponentPositions - 2;
   const auto mantissaEnd = exponentIt;
 
-  auto exponentDigitDifference = int( exponentDigits ) - bufferExponentPositions;
+  int exponentDigitDifference = int( exponentDigits ) - bufferExponentPositions;
   while ( exponentDigitDifference++ < 0 ){ *it++ = ' '; }
   while ( exponentDigitDifference-- > 1 ){ ++mantissaIt; }
   while ( mantissaIt != mantissaEnd ){ *it++ = *mantissaIt++; }
@@ -19,6 +19,7 @@ writeWithoutConsumption
   *it++ = *exponentIt++; // exponent sign
   exponentDigitDifference--;
   exponentDigitDifference = int( exponentDigits ) - bufferExponentPositions;
+
   while ( exponentDigitDifference++ < 0 ){ ++exponentIt; }
   while ( exponentDigitDifference-- > 1 ){ *it++ = '0'; }
   while ( exponentIt != exponentEnd ){ *it++ = *exponentIt++; }
