@@ -1,5 +1,3 @@
-namespace disco {
-
 struct ENDF : public Real< 11 > {
 
   static constexpr int w = 11;
@@ -31,5 +29,3 @@ struct ENDF : public Real< 11 > {
 #include "disco/FixedWidthField/Real/Scientific/src/writeInfinity.hpp"
  
 };
-
-}

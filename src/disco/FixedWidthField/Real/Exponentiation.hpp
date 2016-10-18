@@ -1,11 +1,9 @@
-namespace disco {
-
 template< typename Representation, int length, int offset >
 constexpr auto generateCache(){
   std::array< Representation, length > partialCache{};
   auto hackIterator = &( std::get<0>(partialCache) );
   for ( int index = 0; index < length; ++index ){
-    *hackIterator++  = disco::pow( Representation(10), index - offset );
+    *hackIterator++  = njoy::disco::pow( Representation(10), index - offset );
   }
   return partialCache;
 }
@@ -34,5 +32,3 @@ maxOrder = noDigits( std::numeric_limits< Representation >::max() ) - 1;
 template< typename Representation >
 using integerExponentiation =
   Exponentation< Representation, maxOrder<Representation> >;
-
-}

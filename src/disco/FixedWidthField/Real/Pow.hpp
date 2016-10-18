@@ -1,5 +1,3 @@
-namespace disco {
-
 template< typename T, typename Integer >
 constexpr T pow( T real, Integer power ){
   return
@@ -8,6 +6,4 @@ constexpr T pow( T real, Integer power ){
     ( power == 1 ) ? real :
     ( ( power % 2 ) == 0 ) ? pow( real * real , power / 2 ) :
                              real * pow( real, power - 1 );
-}
-
 }

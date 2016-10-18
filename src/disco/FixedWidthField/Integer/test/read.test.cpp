@@ -17,17 +17,17 @@ SCENARIO("Integer read", "[Integer], [read]"){
     for ( auto& string : number.second ){
       auto begin = string.begin();
       auto end = string.end();
-      auto result = disco::Integer<10>::read< int >(begin, end);
+      auto result = njoy::disco::Integer<10>::read< int >(begin, end);
       REQUIRE( number.first == result );
     }
   }
   std::string TooLarge = "2147483648";
   auto begin = TooLarge.begin();
   auto end = TooLarge.end();
-  REQUIRE_THROWS( disco::Integer<10>::read< int >(begin, end) );
+  REQUIRE_THROWS( njoy::disco::Integer<10>::read< int >(begin, end) );
 
   std::string TooSmall = "-2147483649";
   begin = TooSmall.begin();
   end = TooSmall.end();
-  REQUIRE_THROWS( disco::Integer<11>::read< int >(begin, end) );
+  REQUIRE_THROWS( njoy::disco::Integer<11>::read< int >(begin, end) );
 }

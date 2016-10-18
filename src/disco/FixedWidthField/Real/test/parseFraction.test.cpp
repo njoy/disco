@@ -10,7 +10,7 @@ SCENARIO("Real parse fraction", "[Real], [parseFraction]"){
   bool success;
   for (unsigned i = 0; i < test_strings.size(); ++i){
     p = 0; auto si = test_strings[i].begin();
-    REQUIRE( 123 == disco::Real<5>::parseFraction( si, p, success ) );
+    REQUIRE( 123 == njoy::disco::Real<5>::parseFraction( si, p, success ) );
     REQUIRE( success == true );
   }
   REQUIRE( p == 4 );
@@ -18,7 +18,7 @@ SCENARIO("Real parse fraction", "[Real], [parseFraction]"){
   std::string fractionless("123");
   p = 0;
   auto si = fractionless.begin();
-  disco::Real<5>::parseFraction( si, p, success );
+  njoy::disco::Real<5>::parseFraction( si, p, success );
   REQUIRE( p == 0 );
   REQUIRE( success == false );
 }

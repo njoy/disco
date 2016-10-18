@@ -15,7 +15,7 @@ SCENARIO("Character read", "[Character], [read]"){
     for ( auto& pair : testSet ){
       auto it = pair.first.begin();
       auto end = pair.first.end();
-      auto string = disco::Character< 11 >::read( it, end );
+      auto string = njoy::disco::Character< 11 >::read( it, end );
       REQUIRE( string == pair.second );
     }
   }
@@ -26,7 +26,7 @@ SCENARIO("Character read", "[Character], [read]"){
     for ( auto& pair : testSet ){
       auto it = pair.first.begin();
       auto end = pair.first.end();
-      disco::Character< 11 >::read( it, end );
+      njoy::disco::Character< 11 >::read( it, end );
       REQUIRE( *it == pair.second );
     }
   }

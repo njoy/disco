@@ -16,9 +16,9 @@ SCENARIO("Real parse exponent", "[Real], [parseExponent]"){
   for (unsigned i = 0; i < test_strings.size(); ++i){
     p = 0; auto si = test_strings[i].begin();
     if ( (i + 1) % 3 == 2 ){
-      REQUIRE( -123 == disco::Real<5>::parseExponent( si, p ) );
+      REQUIRE( -123 == njoy::disco::Real<5>::parseExponent( si, p ) );
     } else {
-      REQUIRE( 123 == disco::Real<5>::parseExponent( si, p ) );
+      REQUIRE( 123 == njoy::disco::Real<5>::parseExponent( si, p ) );
     }
   }
 }

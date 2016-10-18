@@ -12,7 +12,7 @@ SCENARIO("Real parse base", "[Real], [parseBase]"){
   for (unsigned i = 0; i < test_strings.size(); ++i){
     p = 0;
     auto si = test_strings[i].begin();
-    REQUIRE( 123 == disco::Real<5>::parseBase( si, p, success ) );
+    REQUIRE( 123 == njoy::disco::Real<5>::parseBase( si, p, success ) );
     REQUIRE( success == true );
     REQUIRE( p == 3 );
   }
@@ -20,7 +20,7 @@ SCENARIO("Real parse base", "[Real], [parseBase]"){
   std::string baseless(".123");
   p = 0;
   auto si = baseless.begin();
-  disco::Real<5>::parseBase( si, p, success );
+  njoy::disco::Real<5>::parseBase( si, p, success );
   REQUIRE( p == 0 );
   REQUIRE( success == false );
 }

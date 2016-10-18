@@ -12,7 +12,7 @@ SCENARIO("ColumnPosition read", "[ColumnPosition], [read]"){
     auto begin = s.begin();
     auto it = begin;
     auto end = s.end();
-    disco::ColumnPosition< 1 >::read( it, end );
+    njoy::disco::ColumnPosition< 1 >::read( it, end );
     REQUIRE( ( it - begin ) == 1u );
   }
   {
@@ -20,7 +20,7 @@ SCENARIO("ColumnPosition read", "[ColumnPosition], [read]"){
     auto begin = s.begin();
     auto it = begin;
     auto end = s.end();
-    disco::ColumnPosition< 2 >::read( it, end );
+    njoy::disco::ColumnPosition< 2 >::read( it, end );
     REQUIRE( ( it - begin ) == 2u );
   }
   {
@@ -28,7 +28,7 @@ SCENARIO("ColumnPosition read", "[ColumnPosition], [read]"){
     auto begin = s.begin();
     auto it = begin;
     auto end = s.end();
-    disco::ColumnPosition< 2 >::read( it, end );
+    njoy::disco::ColumnPosition< 2 >::read( it, end );
     REQUIRE( ( it - begin ) == 2u );
   }
   {
@@ -36,7 +36,7 @@ SCENARIO("ColumnPosition read", "[ColumnPosition], [read]"){
     auto begin = s.begin();
     auto it = begin;
     auto end = s.end();
-    disco::ColumnPosition< 1 >::read( it, end );
+    njoy::disco::ColumnPosition< 1 >::read( it, end );
     REQUIRE( ( it - begin ) == 1u );
   }
   {
@@ -44,7 +44,7 @@ SCENARIO("ColumnPosition read", "[ColumnPosition], [read]"){
     auto begin = s.begin();
     auto it = begin;
     auto end = s.end();
-    disco::ColumnPosition< 6 >::read( it, end );
+    njoy::disco::ColumnPosition< 6 >::read( it, end );
     REQUIRE( ( it - begin ) == 3u );
   }
 }

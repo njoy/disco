@@ -1,8 +1,4 @@
-#include <string>
-
-namespace disco {
-
-template< uint16_t w >
+template< uint16_t w = 1 >
 struct ColumnPosition : public FixedWidthField< w >{
   
   using FixedWidthField_ = FixedWidthField< w >;
@@ -16,4 +12,3 @@ struct ColumnPosition : public FixedWidthField< w >{
   
 };
 
-}

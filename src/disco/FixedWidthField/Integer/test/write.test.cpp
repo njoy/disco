@@ -16,13 +16,13 @@ SCENARIO("Integer write", "[Integer], [write]"){
     for ( auto& pair : testSet ){
       std::string buffer("");
       auto it = std::back_inserter(buffer);
-      disco::Integer< 11 >::write( pair.first, it );
+      njoy::disco::Integer< 11 >::write( pair.first, it );
       REQUIRE(buffer == pair.second);
     }
     std::string buffer("");
     auto it = std::back_inserter(buffer);
     std::uint64_t ul = 1;
-    disco::Integer< 11 >::write( ul, it );
+    njoy::disco::Integer< 11 >::write( ul, it );
     REQUIRE(buffer == "          1");
   }
   {
@@ -32,20 +32,20 @@ SCENARIO("Integer write", "[Integer], [write]"){
     for ( auto& pair : testSet ){
       std::string buffer("");
       auto it = std::back_inserter(buffer);
-      disco::Integer< 11, 4 >::write( pair.first, it );
+      njoy::disco::Integer< 11, 4 >::write( pair.first, it );
       REQUIRE(buffer == pair.second);
     }
     std::string buffer("");
     auto it = std::back_inserter(buffer);
-    disco::Integer< 8 >::write( std::numeric_limits<int>::max(), it );
+    njoy::disco::Integer< 8 >::write( std::numeric_limits<int>::max(), it );
     REQUIRE(buffer == "********");
     buffer = "";
     it = std::back_inserter(buffer);
-    disco::Integer< 11, 4 >::write( std::numeric_limits<int>::max(), it );
+    njoy::disco::Integer< 11, 4 >::write( std::numeric_limits<int>::max(), it );
     REQUIRE(buffer == " 2147483647");
   }
   std::string buffer("");
   auto it = std::back_inserter(buffer);
-  disco::Integer< 11 >::write( it );
+  njoy::disco::Integer< 11 >::write( it );
   REQUIRE(buffer == "           ");
 }

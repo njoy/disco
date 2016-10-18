@@ -18,7 +18,7 @@ SCENARIO("Scientific write", "[Scientific], [write]"){
     for ( auto& pair : testSet ){
       std::string buffer("");
       auto it = std::back_inserter(buffer);
-      disco::Scientific< 11, 4 >::write( pair.first, it );
+      njoy::disco::Scientific< 11, 4 >::write( pair.first, it );
       REQUIRE(buffer == pair.second);
     }
   }
@@ -33,7 +33,7 @@ SCENARIO("Scientific write", "[Scientific], [write]"){
     for ( auto& pair : testSet ){
       std::string buffer("");
       auto it = std::back_inserter(buffer);
-      disco::Scientific< 11, 4, 2 >::write( pair.first, it );
+      njoy::disco::Scientific< 11, 4, 2 >::write( pair.first, it );
       REQUIRE(buffer == pair.second);
     }
   }
@@ -48,7 +48,7 @@ SCENARIO("Scientific write", "[Scientific], [write]"){
     for ( auto& pair : testSet ){
       std::string buffer("");
       auto it = std::back_inserter(buffer);
-      disco::Scientific< 11, 4, 1 >::write( pair.first, it );
+      njoy::disco::Scientific< 11, 4, 1 >::write( pair.first, it );
       REQUIRE(buffer == pair.second);
     }
   }
@@ -63,7 +63,7 @@ SCENARIO("Scientific write", "[Scientific], [write]"){
     for ( auto& pair : testSet ){
       std::string buffer("");
       auto it = std::back_inserter(buffer);
-      disco::Scientific< 11, 4, 3 >::write( pair.first, it );
+      njoy::disco::Scientific< 11, 4, 3 >::write( pair.first, it );
       REQUIRE(buffer == pair.second);
     }
   }
@@ -78,8 +78,8 @@ SCENARIO("Scientific write", "[Scientific], [write]"){
     for ( auto& pair : testSet ){
       std::string buffer("");
       auto it = std::back_inserter(buffer);
-      disco::Scientific< 11, 4, 3 >::write( pair.first, it );
-      disco::Scientific< 11, 4, 3 >::write( 10.0, it );
+      njoy::disco::Scientific< 11, 4, 3 >::write( pair.first, it );
+      njoy::disco::Scientific< 11, 4, 3 >::write( 10.0, it );
       REQUIRE( buffer == ( pair.second + "1.0000E+001" ) );
     }
   }
@@ -94,8 +94,8 @@ SCENARIO("Scientific write", "[Scientific], [write]"){
     for ( auto& pair : testSet ){
       std::string buffer("");
       auto it = std::back_inserter(buffer);
-      disco::Scientific< 11, 4 >::write( pair.first, it );
-      disco::Scientific< 11, 4 >::write( 10.0, it );
+      njoy::disco::Scientific< 11, 4 >::write( pair.first, it );
+      njoy::disco::Scientific< 11, 4 >::write( 10.0, it );
       REQUIRE( buffer == ( pair.second + " 1.0000E+01" ) );
     }
   }
@@ -104,46 +104,46 @@ SCENARIO("Scientific write", "[Scientific], [write]"){
     auto it = std::back_inserter(buffer);
 
     THEN( "Some message" ){
-      disco::Scientific< 11, 4 >::write( it );
+      njoy::disco::Scientific< 11, 4 >::write( it );
       REQUIRE(buffer == "           ");
     }
     THEN( "Some message" ){
-      disco::Scientific< 4, 0 >::write( 
+      njoy::disco::Scientific< 4, 0 >::write( 
           std::numeric_limits<double>::infinity(), it );
       REQUIRE(buffer == " Inf");
     }
     THEN( "Some message" ){
-      disco::Scientific< 4, 0 >::write( 
+      njoy::disco::Scientific< 4, 0 >::write( 
           -std::numeric_limits<double>::infinity(), it );
       REQUIRE(buffer == "-Inf");
     }
     THEN( "Some message" ){
-      disco::Scientific< 3, 0 >::write( 
+      njoy::disco::Scientific< 3, 0 >::write( 
           std::numeric_limits<double>::infinity(), it );
       REQUIRE(buffer == "Inf");
     }
     THEN( "Some message" ){
-      disco::Scientific< 8, 0 >::write( 
+      njoy::disco::Scientific< 8, 0 >::write( 
           std::numeric_limits<double>::infinity(), it );
       REQUIRE(buffer == "Infinity");
     }
     THEN( "Some message" ){
-      disco::Scientific< 8, 0 >::write( 
+      njoy::disco::Scientific< 8, 0 >::write( 
           -std::numeric_limits<double>::infinity(), it );
       REQUIRE(buffer == "    -Inf");
     }
     THEN( "Some message" ){
-      disco::Scientific< 3, 0 >::write( 
+      njoy::disco::Scientific< 3, 0 >::write( 
           -std::numeric_limits<double>::infinity(), it );
       REQUIRE(buffer == "***");
     }
     THEN( "Some message" ){
-      disco::Scientific< 2, 0 >::write( 
+      njoy::disco::Scientific< 2, 0 >::write( 
           std::numeric_limits<double>::infinity(), it );
       REQUIRE(buffer == "**");
     }
     THEN( "Some message" ){
-      disco::Scientific< 2, 0 >::write( 
+      njoy::disco::Scientific< 2, 0 >::write( 
           -std::numeric_limits<double>::infinity(), it );
       REQUIRE(buffer == "**");
     }    

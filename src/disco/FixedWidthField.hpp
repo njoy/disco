@@ -1,5 +1,3 @@
-namespace disco{
-
 template< uint16_t w >
 struct FixedWidthField {
 
@@ -40,5 +38,3 @@ struct FixedWidthField {
 #include "disco/FixedWidthField/src/skipPad.hpp"
   
 };
-
-}

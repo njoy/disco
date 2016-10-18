@@ -1,9 +1,3 @@
-#include <array>
-#include <cctype>
-#include <cmath>
-
-namespace disco {
-
 template< uint16_t w >
 struct Real : public FixedWidthField< w >{
 
@@ -40,5 +34,3 @@ struct Real : public FixedWidthField< w >{
 #include "disco/FixedWidthField/Real/src/noDigits.hpp"
 
 };
-
-}

@@ -1,6 +1,5 @@
-namespace disco {
-
-template< uint16_t w, uint16_t d, uint16_t e >
+template< uint16_t w, uint16_t d,
+          uint16_t e = std::numeric_limits<uint16_t>::max() >
 struct Scientific : public Real< w > {
 
   using Real_t = Real< w >;
@@ -45,5 +44,3 @@ struct Scientific : public Real< w > {
 #include "disco/FixedWidthField/Real/Scientific/src/writeInfinity.hpp"
   
 };
-
-}

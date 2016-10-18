@@ -1,6 +1,4 @@
-namespace disco {
-
-template< uint16_t w, uint16_t m >
+template< uint16_t w, uint16_t m = std::numeric_limits<uint16_t>::max() >
 struct Integer : public FixedWidthField< w >{
   
   using FixedWidthField_ = FixedWidthField< w >;
@@ -40,4 +38,3 @@ struct Integer : public FixedWidthField< w >{
   
 };
 
-}

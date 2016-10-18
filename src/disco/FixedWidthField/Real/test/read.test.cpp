@@ -18,7 +18,7 @@ SCENARIO("Real read", "[Real], [read]"){
   for (unsigned i = 0; i < test_strings.size(); ++i){
     auto begin = test_strings[i].begin();
     auto end = test_strings[i].end();
-    auto result = disco::Real<10>::read<double>(begin, end);
+    auto result = njoy::disco::Real<10>::read<double>(begin, end);
     auto error = std::abs( ( result - reference[i] ) / reference[i] );
     REQUIRE( error < 1E-15 );
   }
@@ -26,7 +26,7 @@ SCENARIO("Real read", "[Real], [read]"){
   std::string blank {"          "};
   auto begin = blank.begin();
   auto end = blank.end();
-  auto result = disco::Real<10>::read<double>(begin, end);
+  auto result = njoy::disco::Real<10>::read<double>(begin, end);
   REQUIRE( result == 0 );
 
   std::vector< std::string >
@@ -79,7 +79,7 @@ SCENARIO("Real read", "[Real], [read]"){
   for ( auto& test_string : zero ){
     auto begin = test_string.begin();
     auto end = test_string.end();
-    auto result = disco::Real<10>::read<double>(begin, end);
+    auto result = njoy::disco::Real<10>::read<double>(begin, end);
     REQUIRE( result == 0 );
   }
   
@@ -202,7 +202,7 @@ SCENARIO("Real read", "[Real], [read]"){
     for ( auto& string : number.second ){
       auto begin = string.begin();
       auto end = string.end();
-      auto result = disco::Real<10>::read<double>(begin, end);
+      auto result = njoy::disco::Real<10>::read<double>(begin, end);
       auto error = std::abs( ( result - number.first ) / number.first );
       REQUIRE( error < 1E-15 );
     }
@@ -217,7 +217,7 @@ SCENARIO("Real read", "[Real], [read]"){
   for ( auto& string : infinityStrings ){
     auto begin = string.begin();
     auto end = string.end();
-    auto result = disco::Real<10>::read<double>(begin, end);
+    auto result = njoy::disco::Real<10>::read<double>(begin, end);
     REQUIRE( result == std::numeric_limits<double>::infinity() );
   }
 
@@ -228,7 +228,7 @@ SCENARIO("Real read", "[Real], [read]"){
   for ( auto& string : infinityStrings ){
     auto begin = string.begin();
     auto end = string.end();
-    auto result = disco::Real<10>::read<double>(begin, end);
+    auto result = njoy::disco::Real<10>::read<double>(begin, end);
     REQUIRE( result == -std::numeric_limits<double>::infinity() );
   }
 }

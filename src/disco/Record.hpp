@@ -1,4 +1,5 @@
-namespace disco{
+template < typename... Components >
+struct Record;
 
 template<>
 struct Record<> {
@@ -78,5 +79,3 @@ struct Record< Component, Components... > {
   }
   
 };
-
-}

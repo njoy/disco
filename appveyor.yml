@@ -24,7 +24,7 @@ before_build:
   - mingw32-make --version
   - cmake --version
   - echo "NUMBER_OF_PROCESSORS=%NUMBER_OF_PROCESSORS%"
-  - ps: "%PYTHON%" ./fetch_subprojects.py
+  - ps: py -3 ./fetch_subprojects.py
   - ps: new-item -Name build -ItemType folder
   - ps: cd build  
   - cmake .. -G "MinGW Makefiles"

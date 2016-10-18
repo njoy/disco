@@ -1,5 +1,3 @@
-namespace disco {
-
 template< uint16_t w, uint16_t d >
 struct FixedPoint : public Real< w > {
 
@@ -32,5 +30,3 @@ struct FixedPoint : public Real< w > {
 #include "disco/FixedWidthField/Real/Scientific/src/writeInfinity.hpp"
  
 };
-
-}

@@ -5,7 +5,7 @@
 #include "disco.hpp"
 #include "catch.hpp"
 
-using namespace disco;
+using namespace njoy::disco;
 
 SCENARIO("Record read", "[Record], [read]"){
   {

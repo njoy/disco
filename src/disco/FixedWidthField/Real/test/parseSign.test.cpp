@@ -12,6 +12,6 @@ SCENARIO("Real parse sign", "[Real], [parseSign]"){
   for (unsigned i = 0; i < signs.size(); ++i){
     uint16_t p = 0u;
     auto si = test_strings[i].begin();
-    REQUIRE( signs[i] == disco::Real<5>::parseSign( si, p ) );
+    REQUIRE( signs[i] == njoy::disco::Real<5>::parseSign( si, p ) );
   }
 }

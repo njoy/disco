@@ -22,7 +22,7 @@ SCENARIO("FixedPoint write", "[FixedPoint], [write]"){
     for ( auto& pair : testSet ){
       std::string buffer("");
       auto it = std::back_inserter(buffer);
-      disco::FixedPoint< 11, 4 >::write( pair.first, it );
+      njoy::disco::FixedPoint< 11, 4 >::write( pair.first, it );
       REQUIRE(buffer == pair.second);
     }
   }
