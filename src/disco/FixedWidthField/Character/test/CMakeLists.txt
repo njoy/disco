@@ -3,10 +3,10 @@ add_executable( Character.test
                 read.test.cpp
                 write.test.cpp )
 set( test_flags ${disco_compiler_flags} )
-separate_arguments( test_flags )
-foreach( flag IN LISTS test_flags )
+separate_arguments( test_flags_list UNIX_COMMAND "${test_flags}" )
+foreach( flag IN LISTS test_flags_list )
     target_compile_options( Character.test PUBLIC ${flag} )
 endforeach( flag )
-set_target_properties( Character.test PROPERTIES LINK_FLAGS "${disco_compiler_flags}" )
+set_target_properties( Character.test PROPERTIES LINK_FLAGS "${test_flags}" )
 target_link_libraries( Character.test PUBLIC disco )
 add_test( NAME Character COMMAND Character.test ) 
