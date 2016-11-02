@@ -1,0 +1,90 @@
+{
+"unit_tests": {
+"ENDF": [
+"src/disco/FixedWidthField/Real/ENDF/test/ENDF.test.cpp",
+"src/disco/FixedWidthField/Real/ENDF/test/write.test.cpp"
+],
+"FixedPoint": [
+"src/disco/FixedWidthField/Real/FixedPoint/test/FixedPoint.test.cpp",
+"src/disco/FixedWidthField/Real/FixedPoint/test/write.test.cpp"
+],
+"Integer": [
+"src/disco/FixedWidthField/Integer/test/Integer.test.cpp",
+"src/disco/FixedWidthField/Integer/test/read.test.cpp",
+"src/disco/FixedWidthField/Integer/test/write.test.cpp"
+],
+"Real": [
+"src/disco/FixedWidthField/Real/test/parseBase.test.cpp",
+"src/disco/FixedWidthField/Real/test/parseExponent.test.cpp",
+"src/disco/FixedWidthField/Real/test/parseFraction.test.cpp",
+"src/disco/FixedWidthField/Real/test/parseSign.test.cpp",
+"src/disco/FixedWidthField/Real/test/read.test.cpp",
+"src/disco/FixedWidthField/Real/test/Real.test.cpp"
+],
+"ColumnPosition": [
+"src/disco/FixedWidthField/ColumnPosition/test/ColumnPosition.test.cpp",
+"src/disco/FixedWidthField/ColumnPosition/test/read.test.cpp",
+"src/disco/FixedWidthField/ColumnPosition/test/write.test.cpp"
+],
+"Scientific": [
+"src/disco/FixedWidthField/Real/Scientific/test/Scientific.test.cpp",
+"src/disco/FixedWidthField/Real/Scientific/test/write.test.cpp"
+],
+"Character": [
+"src/disco/FixedWidthField/Character/test/Character.test.cpp",
+"src/disco/FixedWidthField/Character/test/read.test.cpp",
+"src/disco/FixedWidthField/Character/test/write.test.cpp"
+],
+"Record": [
+"src/disco/Record/test/read.test.cpp",
+"src/disco/Record/test/Record.test.cpp",
+"src/disco/Record/test/write.test.cpp"
+]
+},
+"is_external_project": false,
+"header_files": [
+"src/disco.hpp",
+"src/disco/FixedWidthField.hpp",
+"src/disco/Record.hpp",
+"src/disco/FixedWidthField/Character.hpp",
+"src/disco/FixedWidthField/ColumnPosition.hpp",
+"src/disco/FixedWidthField/Integer.hpp",
+"src/disco/FixedWidthField/noDigits.hpp",
+"src/disco/FixedWidthField/Real.hpp",
+"src/disco/FixedWidthField/Character/src/read.hpp",
+"src/disco/FixedWidthField/Character/src/write.hpp",
+"src/disco/FixedWidthField/ColumnPosition/src/read.hpp",
+"src/disco/FixedWidthField/ColumnPosition/src/write.hpp",
+"src/disco/FixedWidthField/Integer/src/parseInteger.hpp",
+"src/disco/FixedWidthField/Integer/src/read.hpp",
+"src/disco/FixedWidthField/Integer/src/write.hpp",
+"src/disco/FixedWidthField/Real/ENDF.hpp",
+"src/disco/FixedWidthField/Real/Exponentiation.hpp",
+"src/disco/FixedWidthField/Real/FixedPoint.hpp",
+"src/disco/FixedWidthField/Real/Pow.hpp",
+"src/disco/FixedWidthField/Real/Scientific.hpp",
+"src/disco/FixedWidthField/Real/ENDF/src/write.hpp",
+"src/disco/FixedWidthField/Real/FixedPoint/src/write.hpp",
+"src/disco/FixedWidthField/Real/Scientific/src/write.hpp",
+"src/disco/FixedWidthField/Real/Scientific/src/writeInfinity.hpp",
+"src/disco/FixedWidthField/Real/Scientific/src/writeInvalid.hpp",
+"src/disco/FixedWidthField/Real/Scientific/src/writeWithConsumption.hpp",
+"src/disco/FixedWidthField/Real/Scientific/src/writeWithoutConsumption.hpp",
+"src/disco/FixedWidthField/Real/Scientific/src/writeZero.hpp",
+"src/disco/FixedWidthField/Real/src/noDigits.hpp",
+"src/disco/FixedWidthField/Real/src/parseBase.hpp",
+"src/disco/FixedWidthField/Real/src/parseExponent.hpp",
+"src/disco/FixedWidthField/Real/src/parseFraction.hpp",
+"src/disco/FixedWidthField/Real/src/parseInfinity.hpp",
+"src/disco/FixedWidthField/Real/src/parseSign.hpp",
+"src/disco/FixedWidthField/Real/src/read.hpp",
+"src/disco/FixedWidthField/src/skipPad.hpp"
+],
+"name": "disco",
+"language": "c++",
+"version": "0.0.1",
+"include_path": "src",
+"target": "include",
+"implementation_files": [],
+"language_revision": "C++14"
+}
