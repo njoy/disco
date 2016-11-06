@@ -119,14 +119,20 @@ if( NOT is_subproject )
     endif()
 endif()
 
+if ( NOT GIT_EXECUTABLE )
+    find_package( Git )
+    if ( NOT GIT_FOUND )
+        message( FATAL_ERROR "git installation was not found." )
+    endif()
+endif()
 execute_process(
-    COMMAND git rev-parse --abbrev-ref HEAD
+    COMMAND ${GIT_EXECUTABLE} rev-parse --abbrev-ref HEAD
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     OUTPUT_VARIABLE GIT_BRANCH
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 execute_process(
-    COMMAND git rev-parse HEAD
+    COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     OUTPUT_VARIABLE GIT_HASH
     OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -152,12 +158,12 @@ target_link_libraries( disco INTERFACE catch-adapter )
 
 if( NOT is_subproject ) 
     enable_testing() 
-    add_subdirectory( src/disco/FixedWidthField/Character/test ) 
-    add_subdirectory( src/disco/FixedWidthField/Integer/test ) 
-    add_subdirectory( src/disco/FixedWidthField/Real/test ) 
-    add_subdirectory( src/disco/FixedWidthField/Real/FixedPoint/test ) 
     add_subdirectory( src/disco/FixedWidthField/Real/Scientific/test ) 
-    add_subdirectory( src/disco/FixedWidthField/ColumnPosition/test ) 
+    add_subdirectory( src/disco/FixedWidthField/Character/test ) 
     add_subdirectory( src/disco/FixedWidthField/Real/ENDF/test ) 
+    add_subdirectory( src/disco/FixedWidthField/Real/FixedPoint/test ) 
+    add_subdirectory( src/disco/FixedWidthField/Integer/test ) 
     add_subdirectory( src/disco/Record/test ) 
+    add_subdirectory( src/disco/FixedWidthField/ColumnPosition/test ) 
+    add_subdirectory( src/disco/FixedWidthField/Real/test ) 
 endif() 
