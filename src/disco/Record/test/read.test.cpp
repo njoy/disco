@@ -94,4 +94,30 @@ SCENARIO("Record read", "[Record], [read]"){
     REQUIRE( sink[2] == 3 );
     REQUIRE( sink[3] == 0 );
   }
+  {
+    std::vector< double > sink(4, 0.0);
+    auto it = sink.begin();
+    std::string source = " 1.0 2.0 3.0 4.0\r\n"
+                         " 1.0 2.0 3.0 4.0\r\n"
+                         " 1.0 2.0 3.0 4.0\r\n"
+                         " 1.0 2.0 3.0 4.0\r\n"
+                         " 1.0 2.0 3.0 4.0\r\n"
+                         " 1.0 2.0 3.0 4.0\r\n"
+                         " 1.0 2.0 3.0 4.0\r\n"
+                         " 1.0 2.0 3.0 4.0\r\n";
+    auto sourceIt = source.begin();
+    auto end = source.end();
+    int i = 8;
+    while( i-- ){
+      Record< Scientific< 4, 4 >,
+	      Scientific< 4, 4 >,
+	      Scientific< 4, 4 >,
+	      Scientific< 4, 4 > >::read( sourceIt, end,
+					  it[0], it[1], it[2], it[3] );
+      REQUIRE( sink[0] == 1 );
+      REQUIRE( sink[1] == 2 );
+      REQUIRE( sink[2] == 3 );
+      REQUIRE( sink[3] == 4 );
+    }
+  }
 }

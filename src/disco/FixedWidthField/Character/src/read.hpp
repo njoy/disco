@@ -1,15 +1,14 @@
 template< typename Representation, typename Iterator, bool trust = true >
 static Representation
-read( Iterator& it, const Iterator& end ){
+read( Iterator& it, const Iterator& ){
   static_assert( std::is_same< Representation, std::string >::value,
                  "Character strings are only defined for std::string" );
   std::string characterString;
-  FixedWidthField_::verifyWidth_( it, end, TrustTag< trust >() );
   characterString.reserve(w);
   auto remainingCharacters = w;
   while( remainingCharacters--
-         and not ( FixedWidthField_::isNewline( *it )
-                   or FixedWidthField_::isEOF( *it ) ) ){
+         and not ( FixedWidthField_::isEOF( *it )
+		   or FixedWidthField_::isNewline( *it, it ) ) ){
     characterString.push_back( *it++ );
   }
   ++remainingCharacters;

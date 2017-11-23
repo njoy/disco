@@ -1,9 +1,8 @@
-template< typename Iterator, bool trust = true >
+template< typename Iterator >
 static void
-read( Iterator& it, const Iterator& end ){
-  FixedWidthField_::verifyWidth_( it, end, TrustTag< trust >() );
+read( Iterator& it, const Iterator& ){
   auto remainingCharacters = w;
   while( remainingCharacters--
-         and not ( FixedWidthField_::isNewline( *it )
-                   or FixedWidthField_::isEOF( *it ) ) ){ ++it; }
+	 and not ( FixedWidthField_::isNewline( *it, it )
+		   or FixedWidthField_::isEOF( *it ) ) ){ ++it; }
 }

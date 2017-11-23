@@ -26,9 +26,9 @@ template< typename Representation, typename Iterator >
 static void
 write( Representation integer, Iterator& it, WithoutPadding ){
   auto tag = std::is_signed< Representation >();
-  const auto noDigits = Real< 0 >::noDigits( uint64_t( abs( integer, tag ) ) )
+  const auto noDigits = disco::noDigits( uint64_t( abs( integer, tag ) ) )
                         + ( integer < 0 );
-  if ( noDigits > w ){ Scientific< w, 0 >::writeInvalid( it ); return; }
+  if ( noDigits > w ){ writeInvalid( it ); return; }
   std::array< char, w+1  > buffer;
   int consumedCharacters = snprintf( &buffer[0], w+1,
                                      formatUnpadded( tag ), w, integer );
@@ -42,9 +42,9 @@ template< typename Representation, typename Iterator >
 static void
 write( Representation integer, Iterator& it, WithPadding ){
   auto tag = std::is_signed< Representation >();
-  const auto noDigits = Real< 0 >::noDigits( uint64_t( abs( integer, tag ) ) )
+  const auto noDigits = disco::noDigits( uint64_t( abs( integer, tag ) ) )
                         + ( integer < 0 );
-  if ( noDigits > w ){ Scientific< w, 0 >::writeInvalid( it ); return; }
+  if ( noDigits > w ){ writeInvalid( it ); return; }
   auto remainingNonblanks = ( noDigits > m ) ? noDigits : m;
   auto remainingBlanks = w - remainingNonblanks;
   while( remainingBlanks-- ){ *it++ = ' '; }

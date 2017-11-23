@@ -3,9 +3,6 @@ struct Integer : public FixedWidthField< w >{
   
   using FixedWidthField_ = FixedWidthField< w >;
 
-  template< bool trust >
-  using TrustTag = typename FixedWidthField_:: template TrustTag< trust >;
-  
   struct Signed{};
   struct Unsigned{};
 
@@ -15,9 +12,12 @@ struct Integer : public FixedWidthField< w >{
   using ZeroPaddingPolicy =
     std::conditional_t< m == std::numeric_limits<uint16_t>::max(),
                         WithoutPadding, WithPadding >;
+
+  /* helpers */
+  #include "disco/FixedWidthField/Integer/src/parseInteger.hpp"
   
   /* methods */
-#include "disco/FixedWidthField/Integer/src/read.hpp"
+  #include "disco/FixedWidthField/Integer/src/read.hpp"
 
   template< typename Iterator >
   static void write( Iterator& it ){
@@ -30,11 +30,7 @@ struct Integer : public FixedWidthField< w >{
     write( integer, it, ZeroPaddingPolicy() );
   }
   
-#include "disco/FixedWidthField/Integer/src/write.hpp"
-
-  /* helpers */
-
-#include "disco/FixedWidthField/Integer/src/parseInteger.hpp"
-  
+  #include "disco/FixedWidthField/Integer/src/write.hpp"
+  #include "disco/FixedWidthField/Integer/src/writeInvalid.hpp"
 };
 
