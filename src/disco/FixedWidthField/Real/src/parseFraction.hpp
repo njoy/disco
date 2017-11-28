@@ -7,6 +7,7 @@ parseFraction( Iterator& it, uint16_t& position, bool& success ){
     while ( position < Real::endPosition ) {
       ++position; ++it;
       if ( not isdigit( *it ) ) { break; }
+      //TODO: overflow check
       fraction = 10 * fraction + (*it - 48);
     }
   } 

@@ -7,11 +7,12 @@ struct Record<> {
   template< typename Iterator >
   static void read( Iterator& it, const Iterator& end ){
     auto foundEndOfRecord = [&it](){
-      return ( FixedWidthField< 0 >::isNewline( *it )
+      return ( FixedWidthField< 0 >::isNewline( *it, it )
                or FixedWidthField< 0 >::isEOF( *it ) );
     };
     while ( it != end and not foundEndOfRecord() ){ ++it; }
-    it += ( FixedWidthField< 0 >::isNewline( *it ) and it != end );
+    std::advance( it,
+		  FixedWidthField< 0 >::isNewline( *it, it ) and it != end );
   }
   
   template< typename Iterator, typename... Args >

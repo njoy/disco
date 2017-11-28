@@ -1,27 +1,37 @@
 template< typename Iterator >
 static int64_t
-parseInteger( Iterator& it, uint16_t remainingCharacters, Signed ){
+parseInteger( Iterator& it, uint16_t& position, Signed ){
   int64_t sign = 1;
-  if ( ( *it == '-' ) || ( *it == '+' ) ){
-    if ( --remainingCharacters == 0 ){ throw std::exception(); }
+  if ( ( *it == '-' ) or ( *it == '+' ) ){
+    if ( unlikely( ++position == w ) ){
+      throw std::runtime_error("only sign found in integer field");
+    }
     sign -= ( *it == '-' ) * 2;
     ++it;
   }
-  return sign * int64_t( parseInteger( it, remainingCharacters, Unsigned() ) );
+
+  const auto magnitude = parseInteger( it, position, Unsigned() );
+
+  if ( unlikely( magnitude > std::numeric_limits< int64_t >::max() ) ){
+    throw std::runtime_error( "Value overflowed during integer read" );
+  }
+  
+  return sign * int64_t( magnitude );
 }
 
 template< typename Iterator >
 static uint64_t
-parseInteger( Iterator& it, uint16_t remainingCharacters, Unsigned ){
+parseInteger( Iterator& it, uint16_t& position, Unsigned ){
   uint64_t x = 0;
-  while ( remainingCharacters--
-          and not ( FixedWidthField_::isNewline( *it )
-                    or FixedWidthField_::isEOF( *it ) ) ){
-    if( not std::isdigit( *it ) ){
-      throw std::runtime_error("Bad value during integer read");
+  uint64_t safety = 0;
+  while ( position < w and std::isdigit( *it ) ){
+    safety = x * 10 + ( *it - '0');
+    if ( unlikely( safety < x ) ){
+      throw std::runtime_error("Value overflowed during integer read");
     }
-    x = x * 10 + ( *it - '0');		
+    x = safety;
     ++it;
+    ++position;
   }
   return x;
 }

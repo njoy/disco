@@ -1,63 +1,76 @@
 template< typename Representation, typename Iterator, bool trust = true >
 static Representation
-read( Iterator& it, const Iterator& end ){
-  FixedWidthField_::verifyWidth_( it, end, TrustTag< trust >() );
+read( Iterator& it, const Iterator& ){
+  auto position = FixedWidthField_::whiteSpace( it );
   
-  auto position = FixedWidthField_::skipPad( it );
   if ( position == w
-       or FixedWidthField_::isNewline(*it)
+       or FixedWidthField_::isNewline(*it, it)
        or FixedWidthField_::isEOF(*it) ){ return Representation(0.0); }
-  
-  const auto sign = Real::parseSign(it, position);
 
-  bool baseSuccess = false;
-  auto base = Real::parseBase(it, position, baseSuccess);
-  //LOG(INFO) << "base: " << base;
-  if ( position == Real::endPosition ){
-    ++it;
-    return Representation( sign * int64_t( base ) );
-  }
+  const auto value = [&]{
+    const auto sign = Real::parseSign(it, position);
 
-  bool fractionSuccess = false;
-  const auto decimalPosition = position;
-  const auto fraction = Real::parseFraction( it, position, fractionSuccess );
-  //LOG(INFO) << "fraction: " << fraction;
-  if ( not baseSuccess && not fractionSuccess ){
-    const bool succeeded = Real::parseInfinity( it, position );    
-    if ( not succeeded || position != w  ){
-      throw std::runtime_error("cannot parse invalid real number");
+    bool baseSuccess = false;
+    auto base = Real::parseBase(it, position, baseSuccess);
+
+    if ( position == Real::endPosition ){
+      ++it;
+      return Representation( sign * int64_t( base ) );
     }
-    return sign * std::numeric_limits< Representation >::infinity();
-  }
 
-  const auto noFractionDigits =
-    fractionSuccess * ( position - decimalPosition - (position != endPosition) );
-  //LOG(INFO) << "noFractionDigits: " << noFractionDigits;
-  const auto factor =
-    integerExponentiation< uint64_t >::cache( noFractionDigits );
-  //LOG(INFO) << "factor: " << factor;
-  if ( position == Real::endPosition ){
-    ++it;
-    return sign * ( base + fraction / Representation(factor) );
-  }
+    bool fractionSuccess = false;
+    const auto decimalPosition = position;
+    const auto fraction = Real::parseFraction( it, position, fractionSuccess );
+    
+    const auto noFractionDigits =
+	fractionSuccess
+	* ( position - decimalPosition - (position != endPosition) );
+    
+    if ( position == Real::endPosition ){
+      const auto factor =
+	realExponentiation< Representation >::cache( -noFractionDigits );
+      
+      ++it;
+      return sign * ( base + fraction * Representation(factor) );
+    }
 
-  const auto exponent = Real::parseExponent( it, position ) - noFractionDigits;
-  //LOG(INFO) << "exponent: " << exponent;
-  auto encounteredEOL =
-    ( FixedWidthField_::isNewline(*it) or FixedWidthField_::isEOF(*it) );
-
-  if ( position != Real::endPosition and not encounteredEOL ){
-    throw std::runtime_error
-      ("illegal character encountered while parsing real number");
-  } else if ( exponent < std::numeric_limits< Representation >::min_exponent10 ){
-    return 0.0;
-  } else if ( exponent > std::numeric_limits< Representation >::max_exponent10 ){
-    return sign * std::numeric_limits< Representation >::infinity();
-  } 
-  it += not encounteredEOL;
   
-  return  sign * int64_t(base * factor + fraction )
-    * realExponentiation< Representation >::cache( exponent );
+    if ( unlikely( not baseSuccess && not fractionSuccess ) ){
+      const bool succeeded = Real::parseInfinity( it, position );    
+      if ( unlikely( not succeeded ) ){
+	throw std::runtime_error("cannot parse invalid real number");
+      }
+      return sign * std::numeric_limits< Representation >::infinity();
+    }
+
+    const auto exponent =
+      Real::parseExponent( it, position ) - noFractionDigits;
+
+    if ( unlikely( exponent
+		   < std::numeric_limits< Representation >::min_exponent10 ) ){
+      return sign * 0.0;
+    }
+
+    if ( unlikely( exponent
+		   > std::numeric_limits< Representation >::max_exponent10 ) ){
+      return sign * std::numeric_limits< Representation >::infinity();
+    } 
+
+    std::advance( it, not ( FixedWidthField_::isNewline( *it, it )
+			    or FixedWidthField_::isEOF( *it ) ) );
+
+    const auto factor =
+      integerExponentiation< int64_t >::cache( noFractionDigits );
+    
+    return sign * int64_t( base * factor + fraction )
+     * realExponentiation< Representation >::cache( exponent );
+  }();
+
+  if ( unlikely( not FixedWidthField_::whiteSpace(it, position) ) ){
+    throw std::runtime_error("cannot parse invalid real number");
+  }
+
+  return value;
 }
 
 template< typename Iterator, bool trust = true >

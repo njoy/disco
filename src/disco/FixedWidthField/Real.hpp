@@ -15,22 +15,17 @@ struct Real : public FixedWidthField< w >{
   /* convenience typedefs */
   using FixedWidthField_ = FixedWidthField< w >;
 
-  template< bool trust >
-  using TrustTag = typename FixedWidthField_:: template TrustTag< trust >;
-  
-  /* methods */
-#include "disco/FixedWidthField/Real/src/read.hpp"
-
   template< typename Iterator >
-  static void write( Iterator& it ){
-    ColumnPosition< w >::write( it );
-  }
+  static void write( Iterator& it ){ ColumnPosition< w >::write( it ); }
+  
   /* helpers */
-#include "disco/FixedWidthField/Real/src/parseSign.hpp"
-#include "disco/FixedWidthField/Real/src/parseBase.hpp"
-#include "disco/FixedWidthField/Real/src/parseFraction.hpp"
-#include "disco/FixedWidthField/Real/src/parseExponent.hpp"
-#include "disco/FixedWidthField/Real/src/parseInfinity.hpp"
-#include "disco/FixedWidthField/Real/src/noDigits.hpp"
+  #include "disco/FixedWidthField/Real/src/parseSign.hpp"
+  #include "disco/FixedWidthField/Real/src/parseBase.hpp"
+  #include "disco/FixedWidthField/Real/src/parseFraction.hpp"
+  #include "disco/FixedWidthField/Real/src/parseExponent.hpp"
+  #include "disco/FixedWidthField/Real/src/parseInfinity.hpp"
 
+  /* methods */
+  #include "disco/FixedWidthField/Real/src/read.hpp"
+  
 };
