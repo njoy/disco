@@ -3,9 +3,11 @@ static Representation
 read( Iterator& it, const Iterator& ){
   auto position = FixedWidthField_::whiteSpace( it );
 
-  if ( position == w
-       or FixedWidthField_::isNewline(*it, it)
-       or FixedWidthField_::isEOF(*it) ){
+  if( FixedWidthField_::isNewline(*it, it) or FixedWidthField_::isEOF(*it) ){
+    return Representation(0.0);
+  }
+
+  if ( position == w ){
     ++it;
     return Representation(0.0);
   }

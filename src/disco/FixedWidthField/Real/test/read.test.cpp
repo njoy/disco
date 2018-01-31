@@ -44,6 +44,14 @@ SCENARIO("Real read", "[Real], [read]"){
   REQUIRE( result == 0 );
   REQUIRE( begin == end );
 
+  std::string shortEntry {"       \n"};
+  begin = shortEntry.begin();
+  end = shortEntry.end();
+  result = njoy::disco::Real<10>::read<double>(begin, end);
+  REQUIRE( result == 0 );
+  REQUIRE( *begin == '\n' );
+  REQUIRE( end - begin  == 1 );
+
   std::vector< std::string >
     zero = {  "         0", "       0E0", "      0E+0", "      0E-0",
               "       0e0", "      0e+0", "      0e-0", "       0D0",
