@@ -2,10 +2,13 @@ template< typename Representation, typename Iterator, bool trust = true >
 static Representation
 read( Iterator& it, const Iterator& ){
   auto position = FixedWidthField_::whiteSpace( it );
-  
+
   if ( position == w
        or FixedWidthField_::isNewline(*it, it)
-       or FixedWidthField_::isEOF(*it) ){ return Representation(0.0); }
+       or FixedWidthField_::isEOF(*it) ){
+    ++it;
+    return Representation(0.0);
+  }
 
   const auto value = [&]{
     const auto sign = Real::parseSign(it, position);
@@ -21,24 +24,24 @@ read( Iterator& it, const Iterator& ){
     bool fractionSuccess = false;
     const auto decimalPosition = position;
     const auto fraction = Real::parseFraction( it, position, fractionSuccess );
-    
+
     const auto noFractionDigits =
-	fractionSuccess
-	* ( position - decimalPosition - (position != endPosition) );
-    
+        fractionSuccess
+        * ( position - decimalPosition - (position != endPosition) );
+
     if ( position == Real::endPosition ){
       const auto factor =
-	realExponentiation< Representation >::cache( -noFractionDigits );
-      
+        realExponentiation< Representation >::cache( -noFractionDigits );
+
       ++it;
       return sign * ( base + fraction * Representation(factor) );
     }
 
-  
+
     if ( unlikely( not baseSuccess && not fractionSuccess ) ){
       const bool succeeded = Real::parseInfinity( it, position );    
       if ( unlikely( not succeeded ) ){
-	throw std::runtime_error("cannot parse invalid real number");
+        throw std::runtime_error("cannot parse invalid real number");
       }
       return sign * std::numeric_limits< Representation >::infinity();
     }
@@ -47,21 +50,21 @@ read( Iterator& it, const Iterator& ){
       Real::parseExponent( it, position ) - noFractionDigits;
 
     if ( unlikely( exponent
-		   < std::numeric_limits< Representation >::min_exponent10 ) ){
+                   < std::numeric_limits< Representation >::min_exponent10 ) ){
       return sign * 0.0;
     }
 
     if ( unlikely( exponent
-		   > std::numeric_limits< Representation >::max_exponent10 ) ){
+                   > std::numeric_limits< Representation >::max_exponent10 ) ){
       return sign * std::numeric_limits< Representation >::infinity();
     } 
 
     std::advance( it, not ( FixedWidthField_::isNewline( *it, it )
-			    or FixedWidthField_::isEOF( *it ) ) );
+                            or FixedWidthField_::isEOF( *it ) ) );
 
     const auto factor =
       integerExponentiation< int64_t >::cache( noFractionDigits );
-    
+
     return sign * int64_t( base * factor + fraction )
      * realExponentiation< Representation >::cache( exponent );
   }();

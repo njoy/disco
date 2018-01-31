@@ -4,11 +4,11 @@ struct Real : public FixedWidthField< w >{
   /* tag structs */
   struct MayConsumeExponent{};
   struct MayNotConsumeExponent{};
-  
+
   struct Full{};
   struct PartialNegative{};
   struct Partial{};
-  
+
   /* constants */
   static constexpr uint16_t endPosition = w - 1;
 
@@ -17,7 +17,7 @@ struct Real : public FixedWidthField< w >{
 
   template< typename Iterator >
   static void write( Iterator& it ){ ColumnPosition< w >::write( it ); }
-  
+
   /* helpers */
   #include "disco/FixedWidthField/Real/src/parseSign.hpp"
   #include "disco/FixedWidthField/Real/src/parseBase.hpp"
@@ -27,5 +27,5 @@ struct Real : public FixedWidthField< w >{
 
   /* methods */
   #include "disco/FixedWidthField/Real/src/read.hpp"
-  
+
 };
