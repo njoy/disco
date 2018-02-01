@@ -15,7 +15,7 @@ parseInteger( Iterator& it, uint16_t& position, Signed ){
   if ( unlikely( magnitude > std::numeric_limits< int64_t >::max() ) ){
     throw std::runtime_error( "Value overflowed during integer read" );
   }
-  
+
   return sign * int64_t( magnitude );
 }
 

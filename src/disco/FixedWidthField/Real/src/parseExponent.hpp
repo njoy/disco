@@ -2,13 +2,13 @@ template< typename Iterator >
 static int64_t
 parseExponent( Iterator& it, uint16_t& position ){
   int16_t sign = 1;
-  
+
   auto boundCheck = []( auto p ){
     if ( unlikely( p == Real::endPosition ) ){
       throw std::runtime_error ("illegal exponent format");
     }
   };
- 
+
   const auto first = toupper(*it);
 
   switch( first ) {
@@ -40,7 +40,7 @@ parseExponent( Iterator& it, uint16_t& position ){
 
   uint64_t exponent = 0;
   do {
-    exponent = 10 * exponent + ( *it - 48 );
+    exponent = 10 * exponent + ( *it - '0' );
     if ( position == Real::endPosition ){ break; }
     ++position; ++it;
   } while ( isdigit( *it ) );

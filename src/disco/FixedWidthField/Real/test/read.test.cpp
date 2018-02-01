@@ -35,6 +35,7 @@ SCENARIO("Real read", "[Real], [read]"){
     auto result = njoy::disco::Real<10>::read<double>(begin, end);
     auto error = std::abs( ( result - reference[i] ) / reference[i] );
     REQUIRE( error < 1E-15 );
+    REQUIRE( end - begin == 0 );
   }
 
   std::string blank {"          "};
@@ -62,18 +63,18 @@ SCENARIO("Real read", "[Real], [read]"){
               "     0.D-0", "      0.d0", "     0.d+0", "     0.d-0",
               "      0.+0", "      0.-0", "       0.0", "     0.0E0",
               "    0.0E+0", "    0.0E-0", "     0.0e0", "    0.0e+0",
-              "    0.0e-0", "     0.0D0", "    0.0D+0", "    0.0D-0", 
+              "    0.0e-0", "     0.0D0", "    0.0D+0", "    0.0D-0",
               "     0.0d0", "    0.0d+0", "    0.0d-0", "     0.0+0",
-              "     0.0-0", "        +0", "      +0E0", "     +0E+0", 
+              "     0.0-0", "        +0", "      +0E0", "     +0E+0",
               "     +0E-0", "      +0e0", "     +0e+0", "     +0e-0",
-              "      +0D0", "     +0D+0", "     +0D-0", "      +0d0", 
+              "      +0D0", "     +0D+0", "     +0D-0", "      +0d0",
               "     +0d+0", "     +0d-0", "      +0+0", "      +0-0",
-              "       +0.", "     +0.E0", "    +0.E+0", "    +0.E-0", 
+              "       +0.", "     +0.E0", "    +0.E+0", "    +0.E-0",
               "     +0.e0", "    +0.e+0", "    +0.e-0", "     +0.D0",
               "    +0.D+0", "    +0.D-0", "     +0.d0", "    +0.d+0",
               "    +0.d-0", "     +0.+0", "     +0.-0", "      +0.0",
               "    +0.0E0", "   +0.0E+0", "   +0.0E-0", "    +0.0e0",
-              "   +0.0e+0", "   +0.0e-0", "    +0.0D0", "   +0.0D+0", 
+              "   +0.0e+0", "   +0.0e-0", "    +0.0D0", "   +0.0D+0",
               "   +0.0D-0", "    +0.0d0", "   +0.0d+0", "   +0.0d-0",
               "    +0.0+0", "    +0.0-0", "        -0", "      -0E0",
               "     -0E+0", "     -0E-0", "      -0e0", "     -0e+0",
@@ -104,8 +105,9 @@ SCENARIO("Real read", "[Real], [read]"){
     auto end = test_string.end();
     auto result = njoy::disco::Real<10>::read<double>(begin, end);
     REQUIRE( result == 0 );
+    REQUIRE( begin == end );
   }
-  
+
   const std::unordered_map
              < double, std::vector<std::string> > valid =
     {{    -0.5, { "       -.5", "     -.5E0", "    -.5E+0", "    -.5E-0",
@@ -187,7 +189,7 @@ SCENARIO("Real read", "[Real], [read]"){
                   "    10.e+0", "    10.e-0", "     10.D0", "    10.D+0",
                   "    10.D-0", "     10.d0", "    10.d+0", "    10.d-0",
                   "     10.+0", "     10.-0", "      10.0", "    10.0E0",
-                  "   10.0E+0", "   10.0E-0", "    10.0e0", "   10.0e+0", 
+                  "   10.0E+0", "   10.0E-0", "    10.0e0", "   10.0e+0",
                   "   10.0e-0", "    10.0D0", "   10.0D+0", "   10.0D-0",
                   "    10.0d0", "   10.0d+0", "   10.0d-0", "    10.0+0",
                   "    10.0-0", "       +10", "     +10E0", "    +10E+0",
@@ -214,7 +216,7 @@ SCENARIO("Real read", "[Real], [read]"){
                   "3.14159e-0", " 3.14159D0", "3.14159D0 ", "3.14159D+0",
                   "3.14159D-0", " 3.14159d0", "3.14159d0 ", "3.14159d+0",
                   "3.14159d-0", " 3.14159+0", "3.14159+0 ", " 3.14159-0",
-                  "3.14159-0 ", " .314159E1", ".314159E1" , ".314159E+1",
+                  "3.14159-0 ", " .314159E1", ".314159E1 " , ".314159E+1",
                   " .314159e1", ".314159e1 ", ".314159e+1", " .314159D1",
                   ".314159D1 ", ".314159D+1", " .314159d1", ".314159d1 ",
                   ".314159d+1", " .314159+1", ".314159+1 ", "0.314159E1",
@@ -231,6 +233,7 @@ SCENARIO("Real read", "[Real], [read]"){
       auto result = njoy::disco::Real<10>::read<double>(begin, end);
       auto error = std::abs( ( result - number.first ) / number.first );
       REQUIRE( error < 1E-15 );
+      REQUIRE( end - begin == 0 );
     }
   }
 
@@ -249,6 +252,7 @@ SCENARIO("Real read", "[Real], [read]"){
     auto end = string.end();
     auto result = njoy::disco::Real<10>::read<double>(begin, end);
     REQUIRE( result == std::numeric_limits<double>::infinity() );
+    REQUIRE( end - begin == 0 );
   }
 
   infinityStrings = { " -infinity", " -Infinity",
@@ -264,5 +268,6 @@ SCENARIO("Real read", "[Real], [read]"){
     auto end = string.end();
     auto result = njoy::disco::Real<10>::read<double>(begin, end);
     REQUIRE( result == -std::numeric_limits<double>::infinity() );
+    REQUIRE( begin == end );
   }
 }

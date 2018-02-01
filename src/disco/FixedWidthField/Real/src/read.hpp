@@ -41,16 +41,24 @@ read( Iterator& it, const Iterator& ){
 
 
     if ( unlikely( not baseSuccess && not fractionSuccess ) ){
-      const bool succeeded = Real::parseInfinity( it, position );    
+      const bool succeeded = Real::parseInfinity( it, position );
       if ( unlikely( not succeeded ) ){
         throw std::runtime_error("cannot parse invalid real number");
       }
+
+      std::advance( it, not ( ( position == ( Real::endPosition + 1 ) )
+                              or FixedWidthField_::isNewline( *it, it )
+                              or FixedWidthField_::isEOF( *it ) ) );
+
       return sign * std::numeric_limits< Representation >::infinity();
     }
 
     const auto exponent =
       Real::parseExponent( it, position ) - noFractionDigits;
 
+    std::advance( it, not ( ( position == ( Real::endPosition + 1 ) )
+                            or FixedWidthField_::isNewline( *it, it )
+                            or FixedWidthField_::isEOF( *it ) ) );
     if ( unlikely( exponent
                    < std::numeric_limits< Representation >::min_exponent10 ) ){
       return sign * 0.0;
@@ -59,10 +67,7 @@ read( Iterator& it, const Iterator& ){
     if ( unlikely( exponent
                    > std::numeric_limits< Representation >::max_exponent10 ) ){
       return sign * std::numeric_limits< Representation >::infinity();
-    } 
-
-    std::advance( it, not ( FixedWidthField_::isNewline( *it, it )
-                            or FixedWidthField_::isEOF( *it ) ) );
+    }
 
     const auto factor =
       integerExponentiation< int64_t >::cache( noFractionDigits );
