@@ -8,7 +8,7 @@ read( Iterator& it, const Iterator& ){
   auto remainingCharacters = w;
   while( remainingCharacters--
          and not ( FixedWidthField_::isEOF( *it )
-		   or FixedWidthField_::isNewline( *it, it ) ) ){
+                   or FixedWidthField_::isNewline( *it, it ) ) ){
     characterString.push_back( *it++ );
   }
   ++remainingCharacters;

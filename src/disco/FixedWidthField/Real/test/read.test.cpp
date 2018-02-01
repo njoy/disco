@@ -43,7 +43,7 @@ SCENARIO("Real read", "[Real], [read]"){
   auto end = blank.end();
   auto result = njoy::disco::Real<10>::read<double>(begin, end);
   REQUIRE( result == 0 );
-  REQUIRE( begin == end );
+  REQUIRE( end - begin == 0 );
 
   std::string shortEntry {"       \n"};
   begin = shortEntry.begin();
@@ -105,7 +105,7 @@ SCENARIO("Real read", "[Real], [read]"){
     auto end = test_string.end();
     auto result = njoy::disco::Real<10>::read<double>(begin, end);
     REQUIRE( result == 0 );
-    REQUIRE( begin == end );
+    REQUIRE( end - begin == 0 );
   }
 
   const std::unordered_map
@@ -125,14 +125,14 @@ SCENARIO("Real read", "[Real], [read]"){
                   "   -.50E-0", "    -.50e0", "   -.50e+0", "   -.50e-0",
                   "    -.50D0", "   -.50D+0", "   -.50D-0", "    -.50d0",
                   "   -.50d+0", "   -.50d-0", "    -.50+0", "    -.50-0",
-                  "   -0.05E1", "  -0.05E+1", "   -0.05e1", "  -0.05e+1", 
+                  "   -0.05E1", "  -0.05E+1", "   -0.05e1", "  -0.05e+1",
                   "   -0.05D1", "  -0.05D+1", "   -0.05d1", "  -0.05d+1",
                   "   -0.05+1", "     -5E-1", "     -5e-1", "     -5D-1",
                   "     -5d-1", "      -5-1"}},
      {     0.5, { "        .5", "      .5E0", "     .5E+0", "     .5E-0",
                   "      .5e0", "     .5e+0", "     .5e-0", "      .5D0",
                   "     .5D+0", "     .5D-0", "      .5d0", "     .5d+0",
-                  "     .5d-0", "      .5+0", "      .5-0", "       0.5", 
+                  "     .5d-0", "      .5+0", "      .5-0", "       0.5",
                   "     0.5E0", "    0.5E+0", "    0.5E-0", "     0.5e0",
                   "    0.5e+0", "    0.5e-0", "     0.5D0", "    0.5D+0",
                   "    0.5D-0", "     0.5d0", "    0.5d+0", "    0.5d-0",
@@ -268,6 +268,6 @@ SCENARIO("Real read", "[Real], [read]"){
     auto end = string.end();
     auto result = njoy::disco::Real<10>::read<double>(begin, end);
     REQUIRE( result == -std::numeric_limits<double>::infinity() );
-    REQUIRE( begin == end );
+    REQUIRE( end - begin == 0 );
   }
 }

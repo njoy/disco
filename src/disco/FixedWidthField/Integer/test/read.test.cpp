@@ -12,7 +12,7 @@ SCENARIO("Integer read", "[Integer], [read]"){
   auto end = blank.end();
   auto result = njoy::disco::Integer<10>::read<int>(begin, end);
   REQUIRE( result == 0 );
-  REQUIRE( begin == end );
+  REQUIRE( end - begin == 0 );
 
   std::string shortEntry {"       \n"};
   begin = shortEntry.begin();
