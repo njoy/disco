@@ -10,7 +10,7 @@ struct Real : public FixedWidthField< w >{
   struct Partial{};
 
   /* constants */
-  static constexpr uint16_t endPosition = w - 1;
+  static constexpr uint16_t width = w;
 
   /* convenience typedefs */
   using FixedWidthField_ = FixedWidthField< w >;

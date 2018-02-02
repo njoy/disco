@@ -22,6 +22,11 @@ SCENARIO("Integer read", "[Integer], [read]"){
   REQUIRE( *begin == '\n' );
   REQUIRE( end - begin  == 1 );
 
+  std::string invalid = " a";
+  begin = invalid.begin();
+  end = invalid.end();
+  REQUIRE_THROWS( njoy::disco::Integer<2>::read< int >(begin, end) );
+
   const std::unordered_map
     < int, std::vector< std::string > > valid =
     {{    0, { "         0",

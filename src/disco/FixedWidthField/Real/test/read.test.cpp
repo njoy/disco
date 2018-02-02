@@ -6,52 +6,77 @@
 #include "catch.hpp"
 
 SCENARIO("Real read", "[Real], [read]"){
-  std::vector< std::string >
-    test_strings{ {"      +123"}, {"     123.0"},
-                  {"   123.123"}, {"      -123"},
-                  {"      1E99"}, {"    1.E+99"},
-                  {"     1E-99"}, {"    1.0-99"},
-                  {"+123      "}, {"123.0     "},
-                  {"123.123   "}, {"-123      "},
-                  {"1E99      "}, {"1.E+99    "},
-                  {"1E-99     "}, {"1.0-99    "},
-                  {"  +123    "}, {"  123.0   "},
-                  {" 123.123  "}, {"  -123    "},
-                  {"    1E99  "}, {"  1.E+99  "},
-                  {"   1E-99  "}, {"  1.0-99  "}};
+  GIVEN("A collection of strings and corresponding double values"){
+    std::vector< std::pair< double, std::string > >
+      testset{ {    123., {"      +123"} },
+               {    123., {"     123.0"} },
+               { 123.123, {"   123.123"} },
+               {    -123, {"      -123"} },
+               {    1E99, {"      1E99"} },
+               {   1.E99, {"    1.E+99"} },
+               {  1.E-99, {"     1E-99"} },
+               {  1.E-99, {"    1.0-99"} },
+               {    123., {"+123      "} },
+               {    123., {"123.0     "} },
+               { 123.123, {"123.123   "} },
+               {    -123, {"-123      "} },
+               {    1E99, {"1E99      "} },
+               {   1.E99, {"1.E+99    "} },
+               {  1.E-99, {"1E-99     "} },
+               {  1.E-99, {"1.0-99    "} },
+               {    123., {"  +123    "} },
+               {    123., {"  123.0   "} },
+               { 123.123, {" 123.123  "} },
+               {    -123, {"  -123    "} },
+               {    1E99, {"    1E99  "} },
+               {   1.E99, {"  1.E+99  "} },
+               {  1.E-99, {"   1E-99  "} },
+               {  1.E-99, {"  1.0-99  "} } };
 
-  std::vector< double >
-    reference{ 123., 123., 123.123, -123,
-               1E99, 1.E99, 1.E-99, 1.E-99,
-               123., 123., 123.123, -123,
-               1E99, 1.E99, 1.E-99, 1.E-99,
-               123., 123., 123.123, -123,
-               1E99, 1.E99, 1.E-99, 1.E-99 };
+    THEN("the string will parse to the corresponding value"){
+      for ( const auto& pair : testset ){
+        const auto& reference = std::get<0>(pair);
+        const auto& string = std::get<1>(pair);
 
-  uint16_t p = 0;
-  for (unsigned i = 0; i < test_strings.size(); ++i){
-    auto begin = test_strings[i].begin();
-    auto end = test_strings[i].end();
-    auto result = njoy::disco::Real<10>::read<double>(begin, end);
-    auto error = std::abs( ( result - reference[i] ) / reference[i] );
-    REQUIRE( error < 1E-15 );
-    REQUIRE( end - begin == 0 );
+        auto begin = string.begin();
+        auto end = string.end();
+        auto result = njoy::disco::Real<10>::read<double>(begin, end);
+        auto error = std::abs( ( result - reference ) / reference );
+        REQUIRE( error < 1E-15 );
+        REQUIRE( end - begin == 0 );
+      }
+    }
   }
 
-  std::string blank {"          "};
-  auto begin = blank.begin();
-  auto end = blank.end();
-  auto result = njoy::disco::Real<10>::read<double>(begin, end);
-  REQUIRE( result == 0 );
-  REQUIRE( end - begin == 0 );
+  GIVEN("a blank string"){
+    std::string blank {"          "};
+    THEN("the string will be parsed to zero"){
+      auto begin = blank.begin();
+      auto end = blank.end();
+      auto result = njoy::disco::Real<10>::read<double>(begin, end);
+      REQUIRE( result == 0 );
+      REQUIRE( end - begin == 0 );
+    }
+  }
 
-  std::string shortEntry {"       \n"};
-  begin = shortEntry.begin();
-  end = shortEntry.end();
-  result = njoy::disco::Real<10>::read<double>(begin, end);
-  REQUIRE( result == 0 );
-  REQUIRE( *begin == '\n' );
-  REQUIRE( end - begin  == 1 );
+  GIVEN("a strings truncated with newline or EOF characters"){
+    std::string ten = "   10  ";
+
+    std::vector<std::string> truncatedStrings
+    { {ten + '\n'},
+      {ten + char{std::char_traits<char>::eof()}} };
+
+    THEN("parsing will terminate at the last character"){
+      for( const auto& string : truncatedStrings ){
+        auto begin = string.begin();
+        auto end = string.end();
+        auto result = njoy::disco::Real<10>::read<double>(begin, end);
+        REQUIRE( result == 10.0 );
+        REQUIRE( *begin == string.back() );
+        REQUIRE( end - begin  == 1 );
+      }
+    }
+  }
 
   std::vector< std::string >
     zero = {  "         0", "       0E0", "      0E+0", "      0E-0",
@@ -269,5 +294,26 @@ SCENARIO("Real read", "[Real], [read]"){
     auto result = njoy::disco::Real<10>::read<double>(begin, end);
     REQUIRE( result == -std::numeric_limits<double>::infinity() );
     REQUIRE( end - begin == 0 );
+  }
+
+  GIVEN("A collection of invalid strings"){
+    std::vector< std::string >
+      testset{{"         +"},
+              {"       + 1"},
+              {"   .      "},
+              {"   .inf   "},
+              {"        E3"},
+              {"    .E3   "},
+              {"         E"},
+              {"      1.2E"},
+              {" -123.0a  "},
+              {" -123.0 a "}};
+
+    for ( auto& string : testset ){
+      std::cout << string << std::endl;
+      auto begin = string.begin();
+      auto end = string.end();
+      REQUIRE_THROWS( njoy::disco::Real<10>::read<double>(begin, end) );
+    }
   }
 }

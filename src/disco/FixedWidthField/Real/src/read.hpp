@@ -15,40 +15,38 @@ read( Iterator& it, const Iterator& ){
   const auto value = [&]{
     const auto sign = Real::parseSign(it, position);
 
+    if ( unlikely( position == width ) ){
+      throw std::runtime_error("cannot parse invalid real number");
+    }
+
     bool baseSuccess = false;
     auto base = Real::parseBase(it, position, baseSuccess);
 
-    if ( position == Real::endPosition ){
-      ++it;
+    if ( position == width ){
       return Representation( sign * int64_t( base ) );
     }
 
     bool fractionSuccess = false;
     const auto decimalPosition = position;
     const auto fraction = Real::parseFraction( it, position, fractionSuccess );
+    const auto foundDecimal = decimalPosition != position;
 
     const auto noFractionDigits =
-        fractionSuccess
-        * ( position - decimalPosition - (position != endPosition) );
+      fractionSuccess
+      * ( position - decimalPosition - (position != width - 1) );
 
-    if ( position == Real::endPosition ){
+    if ( position == width ){
       const auto factor =
         realExponentiation< Representation >::cache( -noFractionDigits );
-
-      ++it;
       return sign * ( base + fraction * Representation(factor) );
     }
 
-
     if ( unlikely( not baseSuccess && not fractionSuccess ) ){
-      const bool succeeded = Real::parseInfinity( it, position );
+      const bool succeeded =
+        not foundDecimal and Real::parseInfinity( it, position );
       if ( unlikely( not succeeded ) ){
         throw std::runtime_error("cannot parse invalid real number");
       }
-
-      std::advance( it, not ( ( position == ( Real::endPosition + 1 ) )
-                              or FixedWidthField_::isNewline( *it, it )
-                              or FixedWidthField_::isEOF( *it ) ) );
 
       return sign * std::numeric_limits< Representation >::infinity();
     }
@@ -56,9 +54,6 @@ read( Iterator& it, const Iterator& ){
     const auto exponent =
       Real::parseExponent( it, position ) - noFractionDigits;
 
-    std::advance( it, not ( ( position == ( Real::endPosition + 1 ) )
-                            or FixedWidthField_::isNewline( *it, it )
-                            or FixedWidthField_::isEOF( *it ) ) );
     if ( unlikely( exponent
                    < std::numeric_limits< Representation >::min_exponent10 ) ){
       return sign * 0.0;
