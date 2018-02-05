@@ -1,6 +1,6 @@
 template< uint16_t w = 1 >
 struct Character : public FixedWidthField< w >{
-  
+
   using FixedWidthField_ = FixedWidthField< w >;
 
   /* methods */
@@ -10,5 +10,5 @@ struct Character : public FixedWidthField< w >{
   template< typename Iterator >
   static void write( Iterator& it ){
     ColumnPosition< w >::write( it );
-  }  
+  }
 };
