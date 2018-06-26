@@ -2,10 +2,16 @@ template< typename Representation, typename Iterator >
 static void
 writeWithoutConsumption
 ( Representation real, Iterator& it, int usedExponentDigits ){
-  std::array< char, w+1  > buffer;
-  int consumedCharacters = snprintf( &buffer[0], w+1, "%*.*E", w, d, real);
+  static constexpr auto fieldRequirement = w + 1;
+  static constexpr auto precisionRequirement = d + 8;
+  static constexpr auto sufficient =
+    fieldRequirement > precisionRequirement ?
+    fieldRequirement : precisionRequirement;
+  std::array< char, sufficient  > buffer;
+  int consumedCharacters = sprintf( &buffer[0], "%*.*E", w, d, real);
+
   const auto bufferExponentPositions = std::max( usedExponentDigits, 2 );
-    
+
   auto mantissaIt = buffer.begin();
   const auto exponentEnd = mantissaIt + consumedCharacters;
   auto exponentIt = exponentEnd - bufferExponentPositions - 2;
