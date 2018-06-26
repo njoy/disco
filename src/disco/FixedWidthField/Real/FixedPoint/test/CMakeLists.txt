@@ -1,11 +1,16 @@
-add_executable( FixedPoint.test
+
+add_executable( disco.FixedWidthField.Real.FixedPoint.test
                 FixedPoint.test.cpp
                 write.test.cpp )
-set( test_flags ${disco_compiler_flags} )
-separate_arguments( test_flags_list UNIX_COMMAND "${test_flags}" )
-foreach( flag IN LISTS test_flags_list )
-    target_compile_options( FixedPoint.test PUBLIC ${flag} )
-endforeach( flag )
-set_target_properties( FixedPoint.test PROPERTIES LINK_FLAGS "${test_flags}" )
-target_link_libraries( FixedPoint.test PUBLIC disco )
-add_test( NAME FixedPoint COMMAND FixedPoint.test ) 
+target_compile_options( disco.FixedWidthField.Real.FixedPoint.test PRIVATE ${${PREFIX}_common_flags}
+$<$<BOOL:${strict}>:${${PREFIX}_strict_flags}>$<$<CONFIG:DEBUG>:
+${${PREFIX}_DEBUG_flags}
+$<$<BOOL:${coverage}>:${${PREFIX}_coverage_flags}>>
+$<$<CONFIG:RELEASE>:
+${${PREFIX}_RELEASE_flags}
+$<$<BOOL:${link_time_optimization}>:${${PREFIX}_link_time_optimization_flags}>
+$<$<BOOL:${nonportable_optimization}>:${${PREFIX}_nonportable_optimization_flags}>>
+
+${CXX_appended_flags} ${disco_appended_flags} )
+target_link_libraries( disco.FixedWidthField.Real.FixedPoint.test PUBLIC disco ) 
+add_test( NAME disco.FixedWidthField.Real.FixedPoint COMMAND disco.FixedWidthField.Real.FixedPoint.test )
