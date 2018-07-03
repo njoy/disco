@@ -15,6 +15,11 @@ addons:
       - clang-3.8
       - llvm-dev
 
+
+before_install:
+  - brew update
+  - brew install python3
+
 language: cpp
 
 compiler:
