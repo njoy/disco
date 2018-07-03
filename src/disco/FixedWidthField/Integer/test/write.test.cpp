@@ -17,6 +17,7 @@ SCENARIO("Integer write", "[Integer], [write]"){
       std::string buffer("");
       auto it = std::back_inserter(buffer);
       njoy::disco::Integer< 11 >::write( pair.first, it );
+      std::cout << std::numeric_limits<int>::min() + 1 << std::endl;
       REQUIRE(buffer == pair.second);
     }
     std::string buffer("");

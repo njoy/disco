@@ -1,9 +1,15 @@
 template< typename Representation, typename Iterator >
 static void
 writeWithConsumption( Representation real, Iterator& it ){
-  std::array< char, w+2 > buffer;
-  const int consumedCharacters = snprintf( &buffer[0], w+2, "%*.*E", w, d, real);
-  
+  static constexpr auto fieldRequirement = w + 2;
+  static constexpr auto precisionRequirement = d + 8;
+  static constexpr auto sufficient =
+    fieldRequirement > precisionRequirement ?
+    fieldRequirement : precisionRequirement;
+  std::array< char, sufficient > buffer;
+  const int consumedCharacters =
+    sprintf( &buffer[0], "%*.*E", w+1, d, real);
+
   auto mantissaIt = buffer.begin();
   const auto exponentEnd = mantissaIt + consumedCharacters;
   auto exponentIt = exponentEnd - 4;

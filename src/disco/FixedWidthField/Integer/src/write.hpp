@@ -11,16 +11,52 @@ abs( Representation integer, std::false_type ){
 }
 
 static constexpr const char*
-formatUnpadded( std::true_type ){ return "%*i"; }
+formatUnpadded( Type<short int> ){ return "%*hi"; }
 
 static constexpr const char*
-formatUnpadded( std::false_type ){ return "%*u"; }
+formatPadded( Type<short int> ){ return "%0*hi"; }
 
 static constexpr const char*
-formatPadded( std::true_type ){ return "%0*i"; }
+formatUnpadded( Type<unsigned short int> ){ return "%*hu"; }
 
 static constexpr const char*
-formatPadded( std::false_type ){ return "%0*u"; }
+formatPadded( Type<unsigned short int> ){ return "%0*hu"; }
+
+static constexpr const char*
+formatUnpadded( Type<int> ){ return "%*i"; }
+
+static constexpr const char*
+formatPadded( Type<int> ){ return "%0*i"; }
+
+static constexpr const char*
+formatUnpadded( Type<unsigned int> ){ return "%*u"; }
+
+static constexpr const char*
+formatPadded( Type<unsigned int> ){ return "%0*u"; }
+
+static constexpr const char*
+formatUnpadded( Type<long> ){ return "%*ld"; }
+
+static constexpr const char*
+formatPadded( Type<long> ){ return "%0*ld"; }
+
+static constexpr const char*
+formatUnpadded( Type<unsigned long> ){ return "%*lu"; }
+
+static constexpr const char*
+formatPadded( Type<unsigned long> ){ return "%0*lu"; }
+
+static constexpr const char*
+formatUnpadded( Type<long long> ){ return "%*lld"; }
+
+static constexpr const char*
+formatPadded( Type<long long> ){ return "%0*lld"; }
+
+static constexpr const char*
+formatUnpadded( Type<unsigned long long> ){ return "%*llu"; }
+
+static constexpr const char*
+formatPadded( Type<unsigned long long> ){ return "%0*llu"; }
 
 template< typename Representation, typename Iterator >
 static void
@@ -30,8 +66,9 @@ write( Representation integer, Iterator& it, WithoutPadding ){
                         + ( integer < 0 );
   if ( noDigits > w ){ writeInvalid( it ); return; }
   std::array< char, w+1  > buffer;
-  int consumedCharacters = snprintf( &buffer[0], w+1,
-                                     formatUnpadded( tag ), w, integer );
+  int consumedCharacters =
+    snprintf( &buffer[0], w+1,
+              formatUnpadded( type_c<Representation> ), w, integer );
   if (consumedCharacters != w){ throw std::exception(); }
   auto begin = buffer.begin();
   auto end = begin + w;
@@ -51,7 +88,8 @@ write( Representation integer, Iterator& it, WithPadding ){
   std::array< char, w+1  > buffer;
   int consumedCharacters =
     snprintf( &buffer[0], remainingNonblanks + 1,
-              formatPadded( tag ), remainingNonblanks, integer );
+              formatPadded( type_c< Representation > ),
+              remainingNonblanks, integer );
   if (consumedCharacters != remainingNonblanks){ throw std::exception(); }
   auto begin = buffer.begin();
   auto end = begin + remainingNonblanks;

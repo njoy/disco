@@ -19,6 +19,7 @@ parseExponent( Iterator& it, uint16_t& position ){
     switch( *it ){
     case '-':
       sign = -1;
+      // fall through
     case '+':
       ++position; ++it;
       boundCheck( position );
@@ -27,6 +28,7 @@ parseExponent( Iterator& it, uint16_t& position ){
     break;
   case '-':
     sign = -1;
+    // fall through
   case '+':
     ++position; ++it;
     boundCheck( position );
