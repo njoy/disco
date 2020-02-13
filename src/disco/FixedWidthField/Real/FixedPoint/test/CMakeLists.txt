@@ -1,7 +1,7 @@
 
 add_executable( disco.FixedWidthField.Real.FixedPoint.test
-                FixedPoint.test.cpp
-                write.test.cpp )
+                write.test.cpp
+                FixedPoint.test.cpp )
 target_compile_options( disco.FixedWidthField.Real.FixedPoint.test PRIVATE ${${PREFIX}_common_flags}
 $<$<BOOL:${strict}>:${${PREFIX}_strict_flags}>$<$<CONFIG:DEBUG>:
 ${${PREFIX}_DEBUG_flags}
