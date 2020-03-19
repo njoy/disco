@@ -32,7 +32,7 @@ parseInteger( Iterator& it, uint16_t& position, Signed ){
 
   const auto magnitude = parseInteger( it, position, Unsigned() );
 
-  if ( unlikely( magnitude > (uint64_t) std::numeric_limits< int64_t >::max() ) ){
+  if ( unlikely( magnitude > static_cast<uint64_t>( std::numeric_limits< int64_t >::max() ) ) ){
     throw std::runtime_error( "Value overflowed during integer read" );
   }
 
