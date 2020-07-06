@@ -1,11 +1,11 @@
 
 add_executable( disco.FixedWidthField.Real.test
-                parseBase.test.cpp
                 parseExponent.test.cpp
+                parseBase.test.cpp
+                Real.test.cpp
                 parseFraction.test.cpp
-                parseSign.test.cpp
                 read.test.cpp
-                Real.test.cpp )
+                parseSign.test.cpp )
 target_compile_options( disco.FixedWidthField.Real.test PRIVATE ${${PREFIX}_common_flags}
 $<$<BOOL:${strict}>:${${PREFIX}_strict_flags}>$<$<CONFIG:DEBUG>:
 ${${PREFIX}_DEBUG_flags}
