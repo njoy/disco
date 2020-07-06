@@ -1,8 +1,8 @@
 
 add_executable( disco.FixedWidthField.Character.test
                 Character.test.cpp
-                read.test.cpp
-                write.test.cpp )
+                write.test.cpp
+                read.test.cpp )
 target_compile_options( disco.FixedWidthField.Character.test PRIVATE ${${PREFIX}_common_flags}
 $<$<BOOL:${strict}>:${${PREFIX}_strict_flags}>$<$<CONFIG:DEBUG>:
 ${${PREFIX}_DEBUG_flags}
