@@ -11,9 +11,16 @@ write( Representation real, Iterator& it ){
     writeInvalid( it );
   } else {
 
+    // characters excluded for fixed notation precision (initial space, digit,
+    // decimal point)
+    const unsigned int NUMBER_EXCLUDED_CHARS = 3;
+
+    // roundoff limit
+    const double ROUNDOFF_LIMIT = 0.5;
+
     // Minimal exponent size is 2 (one sign and one digit)
     constexpr int MIN_EXPWIDTH = 2;
-    // Minimal exponent for which we can use notation
+    // Minimal exponent for which we can use fixed notation
     constexpr int MIN_EXPONENT = -2;
 
     // Decompose real
@@ -21,18 +28,25 @@ write( Representation real, Iterator& it ){
     int exponent{ 0 };
     int expWidth{ MIN_EXPWIDTH };
     if( real != 0.0 ){
-      exponent = std::floor( std::log10( std::abs( real ) ) );
+      // log10(significand 10^exponent) = exponent + log10(significand) and
+      // log10(significand) is within [0,1] so that exponent is given by the
+      // floor value
+      exponent = static_cast< int >( 
+        std::floor( std::log10( std::abs( real ) ) ) );
+
       if( 0 < exponent ){
         significand /= std::pow( 10.0, exponent );
-        expWidth += std::floor( std::log10( std::abs( exponent ) ) );
+        expWidth += static_cast< int >( 
+            std::floor( std::log10( std::abs( exponent ) ) ) );
       } else if( 0 > exponent ){
         significand *= std::pow( 10.0, -exponent );
-        expWidth += std::floor( std::log10( std::abs( exponent ) ) );
+        expWidth += static_cast< int >( 
+            std::floor( std::log10( std::abs( exponent ) ) ) );
       }
     }
 
     unsigned int width = w - expWidth;
-    unsigned int precision = width - 3;
+    unsigned int precision = width - NUMBER_EXCLUDED_CHARS;
     bool fixed = false;
 
     if( ( MIN_EXPONENT < exponent ) and ( exponent < ( w - 1 ) ) ){
@@ -41,7 +55,8 @@ write( Representation real, Iterator& it ){
       remainder -= std::floor( remainder );
       remainder *= max;
 
-      if( ( 0.5 <= remainder ) and ( 0.5 <= ( max - remainder ) ) ){
+      if( ( ROUNDOFF_LIMIT <= remainder ) and 
+          ( ROUNDOFF_LIMIT <= ( max - remainder ) ) ){
          fixed = true;
          precision += expWidth;
          width += expWidth;
