@@ -10,6 +10,8 @@
 #include <limits>
 #include <string>
 #include <type_traits>
+#include <sstream>
+#include <iomanip>
 
 #ifdef __GNUC__
   #define likely(x) __builtin_expect ((x), 1)
