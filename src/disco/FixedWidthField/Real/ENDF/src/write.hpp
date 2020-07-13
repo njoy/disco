@@ -39,15 +39,6 @@ write( Representation real, Iterator& it ){
         expWidth += static_cast< int >( 
             std::floor( std::log10( std::abs( exponent ) ) ) );
       }
-      // if( 0 < exponent ){
-      //   significand /= std::pow( 10.0, exponent );
-      //   expWidth += static_cast< int >( 
-      //       std::floor( std::log10( std::abs( exponent ) ) ) );
-      // } else if( 0 > exponent ){
-      //   significand *= std::pow( 10.0, -exponent );
-      //   expWidth += static_cast< int >( 
-      //       std::floor( std::log10( std::abs( exponent ) ) ) );
-      // }
     }
 
     unsigned int width = w - expWidth;
