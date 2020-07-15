@@ -1,7 +1,7 @@
 
 add_executable( disco.FixedWidthField.Real.ENDF.test
-                ENDF.test.cpp
-                write.test.cpp )
+                write.test.cpp
+                ENDF.test.cpp )
 target_compile_options( disco.FixedWidthField.Real.ENDF.test PRIVATE ${${PREFIX}_common_flags}
 $<$<BOOL:${strict}>:${${PREFIX}_strict_flags}>$<$<CONFIG:DEBUG>:
 ${${PREFIX}_DEBUG_flags}

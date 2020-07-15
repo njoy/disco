@@ -1,8 +1,8 @@
 
 add_executable( disco.Record.test
+                write.test.cpp
                 read.test.cpp
-                Record.test.cpp
-                write.test.cpp )
+                Record.test.cpp )
 target_compile_options( disco.Record.test PRIVATE ${${PREFIX}_common_flags}
 $<$<BOOL:${strict}>:${${PREFIX}_strict_flags}>$<$<CONFIG:DEBUG>:
 ${${PREFIX}_DEBUG_flags}
