@@ -2,6 +2,7 @@
 #include <string>
 #include <tuple>
 #include <vector>
+#include <sstream>
 
 #include "disco.hpp"
 #include "catch.hpp"
@@ -10,8 +11,7 @@ SCENARIO("FixedPoint write", "[FixedPoint], [write]"){
   {
     constexpr double infinity = std::numeric_limits<double>::infinity();
 
-    std::vector< std::pair< double, std::string > >
-      testSet = { 
+    std::vector< std::pair< double, std::string > > testSet = { 
         { 0.0,             " 0.000000+0" },  
         { 10.0,            " 1.000000+1" },
         { 3.14159,         " 3.141590+0"},   
@@ -38,6 +38,7 @@ SCENARIO("FixedPoint write", "[FixedPoint], [write]"){
         { +1.0e+3, " 1.000000+3" },
         { +1.0e+2, " 1.000000+2" },
         { +1.0e+1, " 1.000000+1" },
+        {   100.0, " 1.000000+2" },
         { +1.0000, " 1.000000+0" },
         { +0.1000, " 1.000000-1" },
         { +0.0100, " 1.000000-2" },
@@ -106,10 +107,18 @@ SCENARIO("FixedPoint write", "[FixedPoint], [write]"){
 
         { +1.000000999, " 1.000001+0" },
         { -1.000000999, "-1.000001+0" },
+
+        { 9.999999999999, " 10.000000" },
+        { 99.99999999999, " 100.000000" },
       };
 
     for ( auto& pair : testSet ){
-      THEN( "we can test '" + pair.second + "'" ){
+      // We need to do these shenanigans to get Catch to execute all our tests
+      // and to give helpful messages when they fail
+      std::ostringstream msg;
+      msg << std::fixed << std::setprecision(12);
+      msg << "we can test '" << pair.first << " == " << pair.second << "'";
+      THEN( msg.str() ){
         std::string buffer("");
         auto it = std::back_inserter(buffer);
         njoy::disco::ENDF::write( pair.first, it );
