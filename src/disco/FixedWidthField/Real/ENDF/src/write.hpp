@@ -27,14 +27,16 @@ write( Representation real, Iterator& it ){
     double significand{ real };
     int exponent{ 0 };
     int expWidth{ MIN_EXPWIDTH };
-    if( real != 0.0 ){
+    if ( real != 0.0 ) {
+
       // log10(significand 10^exponent) = exponent + log10(significand) and
       // log10(significand) is within [0,1[ so that exponent is given by the
       // floor value
-      exponent = static_cast< int >( 
+      exponent = static_cast< int >(
         std::floor( std::log10( std::abs( real ) ) ) );
 
-      if( 0 != exponent ){
+      if ( 0 != exponent ) {
+
         significand /= std::pow( 10.0, exponent );
         expWidth += static_cast< int >(
             std::floor( std::log10( std::abs( exponent ) ) ) );
@@ -45,24 +47,36 @@ write( Representation real, Iterator& it ){
     unsigned int precision = width - NUMBER_EXCLUDED_CHARS;
     bool fixed = false;
 
-    if( ( MIN_EXPONENT < exponent ) and ( exponent < ( w - 1 ) ) ){
+    if ( ( MIN_EXPONENT < exponent ) and ( exponent < ( w - 1 ) ) ) {
+
       double max = std::pow( 10.0, expWidth );
       double remainder = std::abs( significand ) * std::pow( 10.0, precision );
       remainder -= std::floor( remainder );
       remainder *= max;
 
-      if( ( ROUNDOFF_LIMIT <= remainder ) and
-          ( ROUNDOFF_LIMIT <= ( max - remainder ) ) ){
-         fixed = true;
-         precision += expWidth;
-         width += expWidth;
+      if ( ( ROUNDOFF_LIMIT <= remainder ) and
+           ( ROUNDOFF_LIMIT <= ( max - remainder ) ) ) {
 
-         if( exponent > static_cast< int >( precision ) ){
-           precision = 0;
-         } else if( 0 < exponent ) {
-           precision -= exponent;
-         }
+        fixed = true;
+        precision += expWidth;
+        width += expWidth;
 
+        if( exponent > static_cast< int >( precision ) ){
+          precision = 0;
+        } else if( 0 < exponent ) {
+          precision -= exponent;
+        }
+      }
+    }
+
+    if ( not fixed and std::abs( significand ) > 10. - ROUNDOFF_LIMIT * std::pow( 10.0, -( static_cast< int >( precision ) ) ) ) {
+
+      significand = significand >= 0. ? 1. : -1.;
+      exponent += 1;
+      if ( exponent == 10 ) {
+
+        width -= 1;
+        precision -= 1;
       }
     }
 
