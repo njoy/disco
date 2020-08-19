@@ -29,14 +29,14 @@ write( Representation real, Iterator& it ){
     int expWidth{ MIN_EXPWIDTH };
     if( real != 0.0 ){
       // log10(significand 10^exponent) = exponent + log10(significand) and
-      // log10(significand) is within [0,1] so that exponent is given by the
+      // log10(significand) is within [0,1[ so that exponent is given by the
       // floor value
       exponent = static_cast< int >( 
         std::floor( std::log10( std::abs( real ) ) ) );
 
       if( 0 != exponent ){
         significand /= std::pow( 10.0, exponent );
-        expWidth += static_cast< int >( 
+        expWidth += static_cast< int >(
             std::floor( std::log10( std::abs( exponent ) ) ) );
       }
     }
@@ -51,12 +51,12 @@ write( Representation real, Iterator& it ){
       remainder -= std::floor( remainder );
       remainder *= max;
 
-      if( ( ROUNDOFF_LIMIT <= remainder ) and 
+      if( ( ROUNDOFF_LIMIT <= remainder ) and
           ( ROUNDOFF_LIMIT <= ( max - remainder ) ) ){
          fixed = true;
          precision += expWidth;
          width += expWidth;
-        
+
          if( exponent > static_cast< int >( precision ) ){
            precision = 0;
          } else if( 0 < exponent ) {
