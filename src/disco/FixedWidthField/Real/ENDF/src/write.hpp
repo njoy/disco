@@ -24,6 +24,7 @@ write( Representation real, Iterator& it ){
     // Decompose real
     double significand = real;
     double absReal = std::abs( real );
+    double tenToExponent = 1.;
     int exponent = 0;
     int expWidth = MIN_EXPWIDTH;
     if ( real != 0.0 ) {
@@ -36,7 +37,8 @@ write( Representation real, Iterator& it ){
 
       if ( 0 != exponent ) {
 
-        significand /= std::pow( 10.0, exponent );
+        tenToExponent = std::pow( 10.0, exponent );
+        significand /= tenToExponent;
         expWidth += static_cast< int >(
             std::floor( std::log10( std::abs( exponent ) ) ) );
       }
@@ -48,12 +50,14 @@ write( Representation real, Iterator& it ){
 
     if ( ( minFixed <= absReal ) and ( absReal < maxFixed ) ) {
 
-      double rssignificand = std::round( significand * std::pow( 10.0, precision ) ) * std::pow( 10.0, exponent ) / std::pow( 10.0, precision );
-      double rfsignificand = std::round( real * std::pow( 10.0, precision + expWidth ) ) / std::pow( 10.0, precision + expWidth );
-      if ( rssignificand != rfsignificand ) {
+      const double tenToPrecision = std::pow( 10.0, precision );
+      const double tenToFixedPrecision = std::pow( 10.0, precision + expWidth );
+      const double rsreal = std::round( significand * tenToPrecision ) * tenToExponent / tenToPrecision;
+      const double rfreal = std::round( real * tenToFixedPrecision ) / tenToFixedPrecision;
+      if ( rsreal != rfreal ) {
 
         double max = std::pow( 10.0, expWidth );
-        double remainder = std::abs( significand ) * std::pow( 10.0, precision );
+        double remainder = std::abs( significand ) * tenToPrecision;
         remainder -= std::floor( remainder );
         remainder *= max;
 
