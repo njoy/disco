@@ -20,20 +20,19 @@ write( Representation real, Iterator& it ){
 
     // Minimal exponent size is 2 (one sign and one digit)
     constexpr int MIN_EXPWIDTH = 2;
-    // Minimal exponent for which we can use fixed notation
-    constexpr int MIN_EXPONENT = -2;
 
     // Decompose real
-    double significand{ real };
-    int exponent{ 0 };
-    int expWidth{ MIN_EXPWIDTH };
+    double significand = real;
+    double absReal = std::abs( real );
+    int exponent = 0;
+    int expWidth = MIN_EXPWIDTH;
     if ( real != 0.0 ) {
 
       // log10(significand 10^exponent) = exponent + log10(significand) and
       // log10(significand) is within [0,1[ so that exponent is given by the
       // floor value
       exponent = static_cast< int >(
-        std::floor( std::log10( std::abs( real ) ) ) );
+        std::floor( std::log10( absReal ) ) );
 
       if ( 0 != exponent ) {
 
@@ -47,7 +46,7 @@ write( Representation real, Iterator& it ){
     unsigned int precision = width - NUMBER_EXCLUDED_CHARS;
     bool fixed = false;
 
-    if ( ( MIN_EXPONENT < exponent ) and ( exponent < ( w - 1 ) ) ) {
+    if ( ( minFixed <= absReal ) and ( absReal < maxFixed ) ) {
 
       double max = std::pow( 10.0, expWidth );
       double remainder = std::abs( significand ) * std::pow( 10.0, precision );
@@ -61,41 +60,55 @@ write( Representation real, Iterator& it ){
         precision += expWidth;
         width += expWidth;
 
-        if( exponent > static_cast< int >( precision ) ){
+        if ( exponent > static_cast< int >( precision ) ) {
+
           precision = 0;
-        } else if( 0 < exponent ) {
+        }
+        else if( 0 < exponent ) {
+
           precision -= exponent;
         }
       }
     }
 
-    if ( not fixed and std::abs( significand ) > 10. - ROUNDOFF_LIMIT * std::pow( 10.0, -( static_cast< int >( precision ) ) ) ) {
+    if ( not fixed ) {
 
-      significand = significand >= 0. ? 1. : -1.;
-      exponent += 1;
-      if ( exponent == 10 ) {
+      double value = std::pow( 10., precision + 1 );
+      double rsignificand = std::round( significand * value ) / value;
 
-        width -= 1;
-        precision -= 1;
+      if ( std::abs( rsignificand ) >= 10. ) {
+
+        significand = significand >= 0. ? 1. : -1.;
+        exponent += 1;
+        if ( exponent == 10 ) {
+
+          width -= 1;
+          precision -= 1;
+        }
       }
     }
 
     std::ostringstream buffer;
     buffer << std::setw(width) << std::fixed << std::showpoint
            << std::right << std::setprecision( precision );
-    if( fixed ){
-      if( 0 == precision ){
+    if ( fixed ) {
+
+      if ( 0 == precision ) {
+
         buffer << static_cast< int >( real );
       }
       else {
+
         buffer << real;
       }
     }
     else {
+
       buffer << significand << std::showpos << exponent;
     }
 
-    for( auto b : buffer.str() ){
+    for ( auto b : buffer.str() ) {
+
       *it++ = b;
     }
   }
