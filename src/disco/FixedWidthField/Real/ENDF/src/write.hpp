@@ -48,25 +48,30 @@ write( Representation real, Iterator& it ){
 
     if ( ( minFixed <= absReal ) and ( absReal < maxFixed ) ) {
 
-      double max = std::pow( 10.0, expWidth );
-      double remainder = std::abs( significand ) * std::pow( 10.0, precision );
-      remainder -= std::floor( remainder );
-      remainder *= max;
+      double rssignificand = std::round( significand * std::pow( 10.0, precision ) ) * std::pow( 10.0, exponent ) / std::pow( 10.0, precision );
+      double rfsignificand = std::round( real * std::pow( 10.0, precision + expWidth ) ) / std::pow( 10.0, precision + expWidth );
+      if ( rssignificand != rfsignificand ) {
 
-      if ( ( ROUNDOFF_LIMIT <= remainder ) and
-           ( ROUNDOFF_LIMIT <= ( max - remainder ) ) ) {
+        double max = std::pow( 10.0, expWidth );
+        double remainder = std::abs( significand ) * std::pow( 10.0, precision );
+        remainder -= std::floor( remainder );
+        remainder *= max;
 
-        fixed = true;
-        precision += expWidth;
-        width += expWidth;
+        if ( ( ROUNDOFF_LIMIT <= remainder ) and
+             ( ROUNDOFF_LIMIT <= ( max - remainder ) ) ) {
 
-        if ( exponent > static_cast< int >( precision ) ) {
+          fixed = true;
+          precision += expWidth;
+          width += expWidth;
 
-          precision = 0;
-        }
-        else if( 0 < exponent ) {
+          if ( exponent > static_cast< int >( precision ) ) {
 
-          precision -= exponent;
+            precision = 0;
+          }
+          else if ( 0 < exponent ) {
+
+            precision -= exponent;
+          }
         }
       }
     }
@@ -89,7 +94,7 @@ write( Representation real, Iterator& it ){
     }
 
     std::ostringstream buffer;
-    buffer << std::setw(width) << std::fixed << std::showpoint
+    buffer << std::setw( width ) << std::fixed << std::showpoint
            << std::right << std::setprecision( precision );
     if ( fixed ) {
 
