@@ -48,12 +48,15 @@ write( Representation real, Iterator& it ){
     unsigned int precision = width - NUMBER_EXCLUDED_CHARS;
     bool fixed = false;
 
+    // only check for fixed when the value is in ]minFixed,maxFixed[
     if ( ( minFixed <= absReal ) and ( absReal < maxFixed ) ) {
 
       const double tenToPrecision = std::pow( 10.0, precision );
       const double tenToFixedPrecision = std::pow( 10.0, precision + expWidth );
       const double rsreal = std::round( significand * tenToPrecision ) * tenToExponent / tenToPrecision;
       const double rfreal = std::round( real * tenToFixedPrecision ) / tenToFixedPrecision;
+
+      // only continue if fixed notation would not produce the same value
       if ( rsreal != rfreal ) {
 
         double max = std::pow( 10.0, expWidth );
@@ -80,6 +83,7 @@ write( Representation real, Iterator& it ){
       }
     }
 
+    // due to roundoff, we sometimes produce 10.+x values instead of 1.+(x+1)
     if ( not fixed ) {
 
       double value = std::pow( 10., precision + 1 );
