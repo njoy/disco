@@ -21,16 +21,7 @@ struct ENDF : public Real< 11 > {
 
   using InfinityPrintingPolicy = Real::Full;
 
-  template< typename Representation >
-  static bool
-  isInvalid( Representation real ){
-    return ( ( real != 0 )
-             && ( ( std::abs( real ) >= maxValue )
-                  || ( std::abs( real ) < minValue ) ) );
-  }
-
 #include "disco/FixedWidthField/Real/ENDF/src/write.hpp"
-#include "disco/FixedWidthField/Real/Scientific/src/writeInvalid.hpp"
 #include "disco/FixedWidthField/Real/Scientific/src/writeInfinity.hpp"
 
 };

@@ -26,7 +26,7 @@ SCENARIO("FixedPoint write", "[FixedPoint], [write]"){
     CHECK( " 3.141590+0" == write( 3.14159 ) );
     CHECK( "   Infinity" == write( infinity ) );
     CHECK( " 0.69314718" == write( 0.69314718056 ) );
-    CHECK( "***********" == write( 1E-100 ) );
+    CHECK( " 1.0000-100" == write( 1E-100 ) );
     CHECK( " 1.00000+10" == write( 1E10 ) );
     CHECK( " 1.00000-10" == write( 1E-10 ) );
     CHECK( "-1.00000+10" == write( -1E10 ) );

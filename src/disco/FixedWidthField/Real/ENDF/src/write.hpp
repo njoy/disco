@@ -7,8 +7,6 @@ write( Representation real, Iterator& it ){
   };
   if ( isInfinite( real ) ){
     writeInfinity( it, ( real < 0 ), InfinityPrintingPolicy() );
-  } else if ( isInvalid( real ) ){
-    writeInvalid( it );
   } else {
 
     // characters excluded for fixed notation precision (initial space, digit,
