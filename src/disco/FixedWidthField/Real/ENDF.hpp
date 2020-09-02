@@ -8,8 +8,8 @@ struct ENDF : public Real< 11 > {
   // above this value, you loose precision if fixed notation is used
   static constexpr double maxFixed = 1e+10;
 
-  static constexpr double maxValue = 1E39;
-  static constexpr double minValue = 1E-38;
+  static constexpr double maxValue = 1E50;
+  static constexpr double minValue = 1E-50;
 
   template< typename Representation >
   static constexpr bool
