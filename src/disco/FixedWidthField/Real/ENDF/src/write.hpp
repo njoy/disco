@@ -1,37 +1,25 @@
 template< typename Representation, typename Iterator >
-static void
-write( Representation real, Iterator& it ){
-  auto isInfinite = []( Representation real ){
-    return std::abs( real ) ==
-    std::numeric_limits<Representation>::infinity();
-  };
-  if ( isInfinite( real ) ){
+static void write( Representation real, Iterator& it ) {
+
+  const double absReal = std::abs( real );
+
+  if ( absReal == std::numeric_limits<Representation>::infinity() ) {
+
     writeInfinity( it, ( real < 0 ), InfinityPrintingPolicy() );
-  } else {
+  }
+  else {
 
-    // characters excluded for fixed notation precision (initial space, digit,
-    // decimal point)
-    const unsigned int NUMBER_EXCLUDED_CHARS = 3;
-
-    // roundoff limit
-    const double ROUNDOFF_LIMIT = 0.5;
-
-    // Minimal exponent size is 2 (one sign and one digit)
-    constexpr int MIN_EXPWIDTH = 2;
-
-    // Decompose real
+    // decompose real
     double significand = real;
-    double absReal = std::abs( real );
     double tenToExponent = 1.;
     int exponent = 0;
-    int expWidth = MIN_EXPWIDTH;
+    int expWidth = minExpWidth;
     if ( real != 0.0 ) {
 
       // log10(significand 10^exponent) = exponent + log10(significand) and
       // log10(significand) is within [0,1[ so that exponent is given by the
       // floor value
-      exponent = static_cast< int >(
-        std::floor( std::log10( absReal ) ) );
+      exponent = static_cast< int >( std::floor( std::log10( absReal ) ) );
 
       if ( 0 != exponent ) {
 
@@ -43,18 +31,20 @@ write( Representation real, Iterator& it ){
     }
 
     unsigned int width = w - expWidth;
-    unsigned int precision = width - NUMBER_EXCLUDED_CHARS;
+    unsigned int precision = width - excluded;
     bool fixed = false;
 
     const double tenToPrecision = std::pow( 10.0, precision );
-    const double rssignificand = std::round( significand * tenToPrecision ) / tenToPrecision;
+    const double rssignificand = std::round( significand * tenToPrecision )
+                                 / tenToPrecision;
 
-    // only check for fixed when the value is in ]minFixed,maxFixed[
+    // only check for fixed when the value is in [minFixed,maxFixed[
     if ( ( minFixed <= absReal ) and ( absReal < maxFixed ) ) {
 
       const double tenToFixedPrecision = std::pow( 10.0, precision + expWidth );
       const double rsreal = rssignificand * tenToExponent;
-      const double rfreal = std::round( real * tenToFixedPrecision ) / tenToFixedPrecision;
+      const double rfreal = std::round( real * tenToFixedPrecision )
+                            / tenToFixedPrecision;
 
       // only continue if fixed notation would not produce the same value
       if ( rsreal != rfreal ) {
@@ -64,8 +54,7 @@ write( Representation real, Iterator& it ){
         remainder -= std::floor( remainder );
         remainder *= max;
 
-        if ( ( ROUNDOFF_LIMIT <= remainder ) and
-             ( ROUNDOFF_LIMIT <= ( max - remainder ) ) ) {
+        if ( ( roundoff <= remainder ) and ( remainder <= max - roundoff ) ) {
 
           fixed = true;
           precision += expWidth;
