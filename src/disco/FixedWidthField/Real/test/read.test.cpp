@@ -48,6 +48,50 @@ SCENARIO("Real read", "[Real], [read]"){
     }
   }
 
+  GIVEN("A collection of strings and corresponding double values with 11 digits"){
+    std::vector< std::pair< double, std::string > >
+      testset{ {    123., {"       +123"} },
+               {    123., {"      123.0"} },
+               { 123.123, {"    123.123"} },
+               {    -123, {"       -123"} },
+               {    1E99, {"       1E99"} },
+               {   1.E99, {"     1.E+99"} },
+               {  1.E-99, {"      1E-99"} },
+               {  1.E-99, {"     1.0-99"} },
+               {    100., {"10.000000+1"} },
+               {    100., {" 1.000000+2"} },
+               {    123., {"+123       "} },
+               {    123., {"123.0      "} },
+               { 123.123, {"123.123    "} },
+               {    -123, {"-123       "} },
+               {    1E99, {"1E99       "} },
+               {   1.E99, {"1.E+99     "} },
+               {  1.E-99, {"1E-99      "} },
+               {  1.E-99, {"1.0-99     "} },
+               {    123., {"  +123     "} },
+               {    123., {"  123.0    "} },
+               { 123.123, {" 123.123   "} },
+               {    -123, {"  -123     "} },
+               {    1E99, {"    1E99   "} },
+               {   1.E99, {"  1.E+99   "} },
+               {  1.E-99, {"   1E-99   "} },
+               {  1.E-99, {"  1.0-99   "} } };
+
+    THEN("the string will parse to the corresponding value"){
+      for ( const auto& pair : testset ){
+        const auto& reference = std::get<0>(pair);
+        const auto& string = std::get<1>(pair);
+
+        auto begin = string.begin();
+        auto end = string.end();
+        auto result = njoy::disco::Real<11>::read<double>(begin, end);
+        auto error = std::abs( ( result - reference ) / reference );
+        REQUIRE( error < 1E-15 );
+        REQUIRE( end - begin == 0 );
+      }
+    }
+  }
+
   GIVEN("a blank string"){
     std::string blank {"          "};
     THEN("the string will be parsed to zero"){
