@@ -35,6 +35,11 @@ SCENARIO( "Real parse exponent" ) {
   position = 0;
   CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
 
+  test = "E 123";
+  iter = test.begin();
+  position = 0;
+  CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
   test = "e+123";
   iter = test.begin();
   position = 0;
@@ -46,6 +51,11 @@ SCENARIO( "Real parse exponent" ) {
   CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
 
   test = "e123";
+  iter = test.begin();
+  position = 0;
+  CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "e 123";
   iter = test.begin();
   position = 0;
   CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
@@ -65,6 +75,11 @@ SCENARIO( "Real parse exponent" ) {
   position = 0;
   CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
 
+  test = "D 123";
+  iter = test.begin();
+  position = 0;
+  CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
   test = "d+123";
   iter = test.begin();
   position = 0;
@@ -76,6 +91,11 @@ SCENARIO( "Real parse exponent" ) {
   CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
 
   test = "d123";
+  iter = test.begin();
+  position = 0;
+  CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "d 123";
   iter = test.begin();
   position = 0;
   CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
