@@ -4,21 +4,129 @@
 #include "disco.hpp"
 #include "catch.hpp"
 
-SCENARIO("Real parse exponent", "[Real], [parseExponent]"){
-  std::vector< std::string >
-    test_strings{ {"+123"}, {"-123"},
-                  {"E123"}, {"E+123"}, {"E-123"},
-                  {"e123"}, {"e+123"}, {"e-123"},
-                  {"D123"}, {"D+123"}, {"D-123"},
-                  {"d123"}, {"d+123"}, {"d-123"} };
-  uint16_t p = 0;
-  bool success;
-  for (unsigned i = 0; i < test_strings.size(); ++i){
-    p = 0; auto si = test_strings[i].begin();
-    if ( (i + 1) % 3 == 2 ){
-      REQUIRE( -123 == njoy::disco::Real<5>::parseExponent( si, p ) );
-    } else {
-      REQUIRE( 123 == njoy::disco::Real<5>::parseExponent( si, p ) );
-    }
-  }
+SCENARIO( "Real parse exponent" ) {
+
+  std::string test;
+  auto iter = test.begin();
+  uint16_t position;
+
+  test = "+123";
+  iter = test.begin();
+  position = 0;
+  CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "+ 123";
+  iter = test.begin();
+  position = 0;
+  CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "E+123";
+  iter = test.begin();
+  position = 0;
+  CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "E+ 123";
+  iter = test.begin();
+  position = 0;
+  CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "E123";
+  iter = test.begin();
+  position = 0;
+  CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "e+123";
+  iter = test.begin();
+  position = 0;
+  CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "e+ 123";
+  iter = test.begin();
+  position = 0;
+  CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "e123";
+  iter = test.begin();
+  position = 0;
+  CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "D+123";
+  iter = test.begin();
+  position = 0;
+  CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "D+ 123";
+  iter = test.begin();
+  position = 0;
+  CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "D123";
+  iter = test.begin();
+  position = 0;
+  CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "d+123";
+  iter = test.begin();
+  position = 0;
+  CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "d+ 123";
+  iter = test.begin();
+  position = 0;
+  CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "d123";
+  iter = test.begin();
+  position = 0;
+  CHECK( +123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "-123";
+  iter = test.begin();
+  position = 0;
+  CHECK( -123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "- 123";
+  iter = test.begin();
+  position = 0;
+  CHECK( -123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "E-123";
+  iter = test.begin();
+  position = 0;
+  CHECK( -123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "E- 123";
+  iter = test.begin();
+  position = 0;
+  CHECK( -123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "e-123";
+  iter = test.begin();
+  position = 0;
+  CHECK( -123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "e- 123";
+  iter = test.begin();
+  position = 0;
+  CHECK( -123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "D-123";
+  iter = test.begin();
+  position = 0;
+  CHECK( -123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "D- 123";
+  iter = test.begin();
+  position = 0;
+  CHECK( -123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "d-123";
+  iter = test.begin();
+  position = 0;
+  CHECK( -123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
+
+  test = "d- 123";
+  iter = test.begin();
+  position = 0;
+  CHECK( -123 == njoy::disco::Real<6>::parseExponent( iter, position ) );
 }
