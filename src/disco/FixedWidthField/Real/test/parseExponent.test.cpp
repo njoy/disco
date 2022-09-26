@@ -74,6 +74,12 @@ SCENARIO( "Real - parse exponent" ) {
     CHECK( 5 == position );
     CHECK( -123 == parse( "d- 123", position ) );
     CHECK( 6 == position );
+
+    // exponent is only read up to the first non-digit
+    CHECK( +123 == parse( "+123 ", position ) );
+    CHECK( 4 == position );
+    CHECK( +123 == parse( "+123a", position ) );
+    CHECK( 4 == position );
   }
 
   THEN( "invalid exponent strings cause an exception" )
