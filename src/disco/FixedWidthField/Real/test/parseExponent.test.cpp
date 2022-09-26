@@ -99,5 +99,7 @@ SCENARIO( "Real - parse exponent" ) {
 
     CHECK_THROWS( parse( "-  a3", position ) );
     CHECK_THROWS( parse( "-    ", position ) );
+    CHECK_THROWS( parse( "+  a3", position ) );
+    CHECK_THROWS( parse( "+    ", position ) );
   }
 }
