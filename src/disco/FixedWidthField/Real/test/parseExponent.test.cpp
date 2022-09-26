@@ -1,4 +1,3 @@
-#include <iterator>
 #include <string>
 
 #include "disco.hpp"
@@ -13,7 +12,7 @@ SCENARIO( "Real - parse exponent" ) {
     return njoy::disco::Real< 6 >::parseExponent( iter, position );
   };
 
-  THEN( "valid exponent strings can be readup to the correct position" )
+  THEN( "valid exponent strings can be read up to the correct position" )
   {
     uint16_t position = 0;
 

@@ -1,5 +1,4 @@
 #include <string>
-#include <vector>
 
 #include "disco.hpp"
 #include "catch.hpp"
