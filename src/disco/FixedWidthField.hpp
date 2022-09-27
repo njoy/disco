@@ -1,5 +1,6 @@
 template< uint16_t w >
 struct FixedWidthField {
+
   /* convenience typedefs */
   template< typename T >
   using ArgumentType =
@@ -8,11 +9,12 @@ struct FixedWidthField {
       T, std::add_const_t < std::add_lvalue_reference_t< T > > >;
 
   constexpr static bool
-  isSpace( const char c ){ return c == ' ' or c == '\t'; }
+  isSpace( const char c ) { return c == ' ' or c == '\t'; }
 
   template< typename Iterator >
   constexpr static bool
-  isNewline( const char c, Iterator& it ){
+  isNewline( const char c, Iterator& it ) {
+
     return
       c == '\n'
       or c == '\f'
@@ -28,5 +30,4 @@ struct FixedWidthField {
   isEOF( const char c ){ return c == std::char_traits<char>::eof(); }
 
   #include "disco/FixedWidthField/src/whiteSpace.hpp"
-  
 };
