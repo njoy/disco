@@ -41,6 +41,7 @@ read( Iterator& it, const Iterator& ) {
       fractionSuccess
       * ( position - decimalPosition - (position != width - 1) );
 
+    // ensure that something like '  .    ' always fails
     if ( unlikely( not baseSuccess && not fractionSuccess ) ) {
 
       const bool succeeded =
@@ -60,6 +61,7 @@ read( Iterator& it, const Iterator& ) {
       ++it;
     }
 
+    // no need to continue if we are at the end
     if ( position == width ) {
 
       const auto factor =
