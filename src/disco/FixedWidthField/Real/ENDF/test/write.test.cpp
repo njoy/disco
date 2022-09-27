@@ -1,8 +1,5 @@
 #include <iterator>
 #include <string>
-#include <tuple>
-#include <vector>
-#include <sstream>
 
 #include "disco.hpp"
 #include "catch.hpp"

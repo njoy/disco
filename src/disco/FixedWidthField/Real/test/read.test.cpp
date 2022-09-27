@@ -5,359 +5,873 @@
 #include "disco.hpp"
 #include "catch.hpp"
 
-SCENARIO("Real read", "[Real], [read]"){
-  GIVEN("A collection of strings and corresponding double values"){
-    std::vector< std::pair< double, std::string > >
-      testset{ {    123., {"      +123"} },
-               {    123., {"     123.0"} },
-               { 123.123, {"   123.123"} },
-               {    -123, {"      -123"} },
-               {    1E99, {"      1E99"} },
-               {   1.E99, {"    1.E+99"} },
-               {  1.E-99, {"     1E-99"} },
-               {  1.E-99, {"    1.0-99"} },
-               {    123., {"+123      "} },
-               {    123., {"123.0     "} },
-               { 123.123, {"123.123   "} },
-               {    -123, {"-123      "} },
-               {    1E99, {"1E99      "} },
-               {   1.E99, {"1.E+99    "} },
-               {  1.E-99, {"1E-99     "} },
-               {  1.E-99, {"1.0-99    "} },
-               {    123., {"  +123    "} },
-               {    123., {"  123.0   "} },
-               { 123.123, {" 123.123  "} },
-               {    -123, {"  -123    "} },
-               {    1E99, {"    1E99  "} },
-               {   1.E99, {"  1.E+99  "} },
-               {  1.E-99, {"   1E-99  "} },
-               {  1.E-99, {"  1.0-99  "} } };
+SCENARIO( "Real - read") {
 
-    THEN("the string will parse to the corresponding value"){
-      for ( const auto& pair : testset ){
-        const auto& reference = std::get<0>(pair);
-        const auto& string = std::get<1>(pair);
+  auto eps = 1e-15; // ~ std::numeric_limits< double >::epsilon() * 10;
 
-        auto begin = string.begin();
-        auto end = string.end();
-        auto result = njoy::disco::Real<10>::read<double>(begin, end);
-        auto error = std::abs( ( result - reference ) / reference );
-        REQUIRE( error < 1E-15 );
-        REQUIRE( end - begin == 0 );
-      }
-    }
-  }
+  auto parse = [] ( const std::string string, bool& consumed ) {
 
-  GIVEN("A collection of strings and corresponding double values with 11 digits"){
-    std::vector< std::pair< double, std::string > >
-      testset{ {    123., {"       +123"} },
-               {    123., {"      123.0"} },
-               { 123.123, {"    123.123"} },
-               {    -123, {"       -123"} },
-               {    1E99, {"       1E99"} },
-               {   1.E99, {"     1.E+99"} },
-               {  1.E-99, {"      1E-99"} },
-               {  1.E-99, {"     1.0-99"} },
-               {    100., {"10.000000+1"} },
-               {    100., {" 1.000000+2"} },
-               {    123., {"+123       "} },
-               {    123., {"123.0      "} },
-               { 123.123, {"123.123    "} },
-               {    -123, {"-123       "} },
-               {    1E99, {"1E99       "} },
-               {   1.E99, {"1.E+99     "} },
-               {  1.E-99, {"1E-99      "} },
-               {  1.E-99, {"1.0-99     "} },
-               {    123., {"  +123     "} },
-               {    123., {"  123.0    "} },
-               { 123.123, {" 123.123   "} },
-               {    -123, {"  -123     "} },
-               {    1E99, {"    1E99   "} },
-               {   1.E99, {"  1.E+99   "} },
-               {  1.E-99, {"   1E-99   "} },
-               {  1.E-99, {"  1.0-99   "} } };
-
-    THEN("the string will parse to the corresponding value"){
-      for ( const auto& pair : testset ){
-        const auto& reference = std::get<0>(pair);
-        const auto& string = std::get<1>(pair);
-
-        auto begin = string.begin();
-        auto end = string.end();
-        auto result = njoy::disco::Real<11>::read<double>(begin, end);
-        auto error = std::abs( ( result - reference ) / reference );
-        REQUIRE( error < 1E-15 );
-        REQUIRE( end - begin == 0 );
-      }
-    }
-  }
-
-  GIVEN("a blank string"){
-    std::string blank {"          "};
-    THEN("the string will be parsed to zero"){
-      auto begin = blank.begin();
-      auto end = blank.end();
-      auto result = njoy::disco::Real<10>::read<double>(begin, end);
-      REQUIRE( result == 0 );
-      REQUIRE( end - begin == 0 );
-    }
-  }
-
-  GIVEN("a strings truncated with newline or EOF characters"){
-    std::string ten = "   10  ";
-
-    std::vector<std::string> truncatedStrings
-    { {ten + '\n'},
-      {ten + char{std::char_traits<char>::eof()}} };
-
-    THEN("parsing will terminate at the last character"){
-      for( const auto& string : truncatedStrings ){
-        auto begin = string.begin();
-        auto end = string.end();
-        auto result = njoy::disco::Real<10>::read<double>(begin, end);
-        REQUIRE( result == 10.0 );
-        REQUIRE( *begin == string.back() );
-        REQUIRE( end - begin  == 1 );
-      }
-    }
-  }
-
-  std::vector< std::string >
-    zero = {  "         0", "       0E0", "      0E+0", "      0E-0",
-              "       0e0", "      0e+0", "      0e-0", "       0D0",
-              "      0D+0", "      0D-0", "       0d0", "      0d+0",
-              "      0d-0", "       0+0", "       0-0", "        0.",
-              "      0.E0", "     0.E+0", "     0.E-0", "      0.e0",
-              "     0.e+0", "     0.e-0", "      0.D0", "     0.D+0",
-              "     0.D-0", "      0.d0", "     0.d+0", "     0.d-0",
-              "      0.+0", "      0.-0", "       0.0", "     0.0E0",
-              "    0.0E+0", "    0.0E-0", "     0.0e0", "    0.0e+0",
-              "    0.0e-0", "     0.0D0", "    0.0D+0", "    0.0D-0",
-              "     0.0d0", "    0.0d+0", "    0.0d-0", "     0.0+0",
-              "     0.0-0", "        +0", "      +0E0", "     +0E+0",
-              "     +0E-0", "      +0e0", "     +0e+0", "     +0e-0",
-              "      +0D0", "     +0D+0", "     +0D-0", "      +0d0",
-              "     +0d+0", "     +0d-0", "      +0+0", "      +0-0",
-              "       +0.", "     +0.E0", "    +0.E+0", "    +0.E-0",
-              "     +0.e0", "    +0.e+0", "    +0.e-0", "     +0.D0",
-              "    +0.D+0", "    +0.D-0", "     +0.d0", "    +0.d+0",
-              "    +0.d-0", "     +0.+0", "     +0.-0", "      +0.0",
-              "    +0.0E0", "   +0.0E+0", "   +0.0E-0", "    +0.0e0",
-              "   +0.0e+0", "   +0.0e-0", "    +0.0D0", "   +0.0D+0",
-              "   +0.0D-0", "    +0.0d0", "   +0.0d+0", "   +0.0d-0",
-              "    +0.0+0", "    +0.0-0", "        -0", "      -0E0",
-              "     -0E+0", "     -0E-0", "      -0e0", "     -0e+0",
-              "     -0e-0", "      -0D0", "     -0D+0", "     -0D-0",
-              "      -0d0", "     -0d+0", "     -0d-0", "      -0+0",
-              "      -0-0", "       -0.", "     -0.E0", "    -0.E+0",
-              "    -0.E-0", "     -0.e0", "    -0.e+0", "    -0.e-0",
-              "     -0.D0", "    -0.D+0", "    -0.D-0", "     -0.d0",
-              "    -0.d+0", "    -0.d-0", "     -0.+0", "     -0.-0",
-              "      -0.0", "    -0.0E0", "   -0.0E+0", "   -0.0E-0",
-              "    -0.0e0", "   -0.0e+0", "   -0.0e-0", "    -0.0D0",
-              "   -0.0D+0", "   -0.0D-0", "    -0.0d0", "   -0.0d+0",
-              "   -0.0d-0", "    -0.0+0", "    -0.0-0", "       0E1",
-              "      0E+1", "       0e1", "      0e+1", "       0D1",
-              "      0D+1", "       0d1", "      0d+1", "       0+1",
-              "      +0E1", "     +0E+1", "      +0e1", "     +0e+1",
-              "      +0D1", "     +0D+1", "      +0d1", "     +0d+1",
-              "      +0+1", "      0E-1", "      0e-1", "      0D-1",
-              "      0d-1", "       0-1", "     +0E-1", "     +0e-1",
-              "     +0D-1", "     +0d-1", "      +0-1", "      -0E1",
-              "     -0E+1", "      -0e1", "     -0e+1", "      -0D1",
-              "     -0D+1", "      -0d1", "     -0d+1", "      -0+1",
-              "     -0E-1", "     -0e-1", "     -0D-1", "     -0d-1",
-              "      -0-1", "          " };
-
-  for ( auto& test_string : zero ){
-    auto begin = test_string.begin();
-    auto end = test_string.end();
-    auto result = njoy::disco::Real<10>::read<double>(begin, end);
-    REQUIRE( result == 0 );
-    REQUIRE( end - begin == 0 );
-  }
-
-  const std::unordered_map
-             < double, std::vector<std::string> > valid =
-    {{    -0.5, { "       -.5", "     -.5E0", "    -.5E+0", "    -.5E-0",
-                  "     -.5e0", "    -.5e+0", "    -.5e-0", "     -.5D0",
-                  "    -.5D+0", "    -.5D-0", "     -.5d0", "    -.5d+0",
-                  "    -.5d-0", "     -.5+0", "     -.5-0", "      -0.5",
-                  "    -0.5E0", "   -0.5E+0", "   -0.5E-0", "    -0.5e0",
-                  "   -0.5e+0", "   -0.5e-0", "    -0.5D0", "   -0.5D+0",
-                  "   -0.5D-0", "    -0.5d0", "   -0.5d+0", "   -0.5d-0",
-                  "     -0.50", "    -0.5-0", "     -0.50", "   -0.50E0",
-                  "  -0.50E+0", "  -0.50E-0", "   -0.50e0", "  -0.50e+0",
-                  "  -0.50e-0", "   -0.50D0", "  -0.50D+0", "  -0.50D-0",
-                  "   -0.50d0", "  -0.50d+0", "  -0.50d-0", "   -0.50+0",
-                  "   -0.50-0", "      -.50", "    -.50E0", "   -.50E+0",
-                  "   -.50E-0", "    -.50e0", "   -.50e+0", "   -.50e-0",
-                  "    -.50D0", "   -.50D+0", "   -.50D-0", "    -.50d0",
-                  "   -.50d+0", "   -.50d-0", "    -.50+0", "    -.50-0",
-                  "   -0.05E1", "  -0.05E+1", "   -0.05e1", "  -0.05e+1",
-                  "   -0.05D1", "  -0.05D+1", "   -0.05d1", "  -0.05d+1",
-                  "   -0.05+1", "     -5E-1", "     -5e-1", "     -5D-1",
-                  "     -5d-1", "      -5-1"}},
-     {     0.5, { "        .5", "      .5E0", "     .5E+0", "     .5E-0",
-                  "      .5e0", "     .5e+0", "     .5e-0", "      .5D0",
-                  "     .5D+0", "     .5D-0", "      .5d0", "     .5d+0",
-                  "     .5d-0", "      .5+0", "      .5-0", "       0.5",
-                  "     0.5E0", "    0.5E+0", "    0.5E-0", "     0.5e0",
-                  "    0.5e+0", "    0.5e-0", "     0.5D0", "    0.5D+0",
-                  "    0.5D-0", "     0.5d0", "    0.5d+0", "    0.5d-0",
-                  "      0.50", "     0.5-0", "      0.50", "    0.50E0",
-                  "   0.50E+0", "   0.50E-0", "    0.50e0", "   0.50e+0",
-                  "   0.50e-0", "    0.50D0", "   0.50D+0", "   0.50D-0",
-                  "    0.50d0", "   0.50d+0", "   0.50d-0", "    0.50+0",
-                  "    0.50-0", "       .50", "     .50E0", "    .50E+0",
-                  "    .50E-0", "     .50e0", "    .50e+0", "    .50e-0",
-                  "     .50D0", "    .50D+0", "    .50D-0", "     .50d0",
-                  "    .50d+0", "    .50d-0", "     .50+0", "     .50-0",
-                  "       +.5", "     +.5E0", "    +.5E+0", "    +.5E-0",
-                  "     +.5e0", "    +.5e+0", "    +.5e-0", "     +.5D0",
-                  "    +.5D+0", "    +.5D-0", "     +.5d0", "    +.5d+0",
-                  "    +.5d-0", "     +.5+0", "     +.5-0", "      +0.5",
-                  "    +0.5E0", "   +0.5E+0", "   +0.5E-0", "    +0.5e0",
-                  "   +0.5e+0", "   +0.5e-0", "    +0.5D0", "   +0.5D+0",
-                  "   +0.5D-0", "    +0.5d0", "   +0.5d+0", "   +0.5d-0",
-                  "     +0.50", "    +0.5-0", "     +0.50", "   +0.50E0",
-                  "  +0.50E+0", "  +0.50E-0", "   +0.50e0", "  +0.50e+0",
-                  "  +0.50e-0", "   +0.50D0", "  +0.50D+0", "  +0.50D-0",
-                  "   +0.50d0", "  +0.50d+0", "  +0.50d-0", "   +0.50+0",
-                  "   +0.50-0", "      +.50", "    +.50E0", "   +.50E+0",
-                  "   +.50E-0", "    +.50e0", "   +.50e+0", "   +.50e-0",
-                  "    +.50D0", "   +.50D+0", "   +.50D-0", "    +.50d0",
-                  "   +.50d+0", "   +.50d-0", "    +.50+0", "    +.50-0",
-                  "    0.05E1", "   0.05E+1", "    0.05e1", "   0.05e+1",
-                  "    0.05D1", "   0.05D+1", "    0.05d1", "   0.05d+1",
-                  "    0.05+1", "   +0.05E1", "  +0.05E+1", "   +0.05e1",
-                  "  +0.05e+1", "   +0.05D1", "  +0.05D+1", "   +0.05d1",
-                  "  +0.05d+1", "   +0.05+1", "      5E-1", "      5e-1",
-                  "      5D-1", "      5d-1", "       5-1", "     +5E-1",
-                  "     +5e-1", "     +5D-1", "     +5d-1", "      +5-1" }},
-     {   -10.0, { "       -10", "     -10E0", "    -10E+0", "    -10E-0",
-                  "     -10e0", "    -10e+0", "    -10e-0", "     -10D0",
-                  "    -10D+0", "    -10D-0", "     -10d0", "    -10d+0",
-                  "    -10d-0", "     -10+0", "     -10-0", "      -10.",
-                  "    -10.E0", "   -10.E+0", "   -10.E-0", "    -10.e0",
-                  "   -10.e+0", "   -10.e-0", "    -10.D0", "   -10.D+0",
-                  "   -10.D-0", "    -10.d0", "   -10.d+0", "   -10.d-0",
-                  "    -10.+0", "    -10.-0", "     -10.0", "   -10.0E0",
-                  "  -10.0E+0", "  -10.0E-0", "   -10.0e0", "  -10.0e+0",
-                  "  -10.0e-0", "   -10.0D0", "  -10.0D+0", "  -10.0D-0",
-                  "   -10.0d0", "  -10.0d+0", "  -10.0d-0", "   -10.0+0",
-                  "   -10.0-0", "      -1E1", "     -1E+1", "      -1e1",
-                  "     -1e+1", "      -1D1", "     -1D+1", "      -1d1",
-                  "     -1d+1", "      -1+1", "   -100E-1", "   -100e-1",
-                  "   -100D-1", "   -100d-1", "    -100-1"}},
-     {    10.0, { "        10", "      10E0", "     10E+0", "     10E-0",
-                  "      10e0", "     10e+0", "     10e-0", "      10D0",
-                  "     10D+0", "     10D-0", "      10d0", "     10d+0",
-                  "     10d-0", "      10+0", "      10-0", "       10.",
-                  "     10.E0", "    10.E+0", "    10.E-0", "     10.e0",
-                  "    10.e+0", "    10.e-0", "     10.D0", "    10.D+0",
-                  "    10.D-0", "     10.d0", "    10.d+0", "    10.d-0",
-                  "     10.+0", "     10.-0", "      10.0", "    10.0E0",
-                  "   10.0E+0", "   10.0E-0", "    10.0e0", "   10.0e+0",
-                  "   10.0e-0", "    10.0D0", "   10.0D+0", "   10.0D-0",
-                  "    10.0d0", "   10.0d+0", "   10.0d-0", "    10.0+0",
-                  "    10.0-0", "       +10", "     +10E0", "    +10E+0",
-                  "    +10E-0", "     +10e0", "    +10e+0", "    +10e-0",
-                  "     +10D0", "    +10D+0", "    +10D-0", "     +10d0",
-                  "    +10d+0", "    +10d-0", "     +10+0", "     +10-0",
-                  "      +10.", "    +10.E0", "   +10.E+0", "   +10.E-0",
-                  "    +10.e0", "   +10.e+0", "   +10.e-0", "    +10.D0",
-                  "   +10.D+0", "   +10.D-0", "    +10.d0", "   +10.d+0",
-                  "   +10.d-0", "    +10.+0", "    +10.-0", "     +10.0",
-                  "   +10.0E0", "  +10.0E+0", "  +10.0E-0", "   +10.0e0",
-                  "  +10.0e+0", "  +10.0e-0", "   +10.0D0", "  +10.0D+0",
-                  "  +10.0D-0", "   +10.0d0", "  +10.0d+0", "  +10.0d-0",
-                  "   +10.0+0", "   +10.0-0", "       1E1", "      1E+1",
-                  "       1e1", "      1e+1", "       1D1", "      1D+1",
-                  "       1d1", "      1d+1", "       1+1", "      +1E1",
-                  "     +1E+1", "      +1e1", "     +1e+1", "      +1D1",
-                  "     +1D+1", "      +1d1", "     +1d+1", "      +1+1",
-                  "    100E-1", "    100e-1", "    100D-1", "    100d-1",
-                  "     100-1", "   +100E-1", "   +100e-1", "   +100D-1",
-                  "   +100d-1", "    +100-1"}},
-     { 3.14159, { "   3.14159", "3.14159   ", " 3.14159E0", "3.14159E0 ",
-                  "3.14159E+0", "3.14159E-0", "3.14159e+0", "3.14159e0 ",
-                  "3.14159e-0", " 3.14159D0", "3.14159D0 ", "3.14159D+0",
-                  "3.14159D-0", " 3.14159d0", "3.14159d0 ", "3.14159d+0",
-                  "3.14159d-0", " 3.14159+0", "3.14159+0 ", " 3.14159-0",
-                  "3.14159-0 ", " .314159E1", ".314159E1 " , ".314159E+1",
-                  " .314159e1", ".314159e1 ", ".314159e+1", " .314159D1",
-                  ".314159D1 ", ".314159D+1", " .314159d1", ".314159d1 ",
-                  ".314159d+1", " .314159+1", ".314159+1 ", "0.314159E1",
-                  "0.314159E1", "0.314159e1", ".314159e+1", "0.314159D1",
-                  ".314159D+1", "0.314159d1", ".314159d+1", "0.314159+1",
-                  "31.4159E-1", "31.4159e-1", "31.4159D-1", "31.4159d-1",
-                  " 31.4159-1", "31.4159-1 ", "  +3.14159", "+3.14159  ",
-                  "+3.14159E0", "+3.14159D0", "+3.14159e0", "+3.14159d0" }}};
-
-  for ( auto& number : valid ){
-    for ( auto& string : number.second ){
-      auto begin = string.begin();
-      auto end = string.end();
-      auto result = njoy::disco::Real<10>::read<double>(begin, end);
-      auto error = std::abs( ( result - number.first ) / number.first );
-      REQUIRE( error < 1E-15 );
-      REQUIRE( end - begin == 0 );
-    }
-  }
-
-  std::vector< std::string >
-    infinityStrings = { "  infinity", "  Infinity",
-                        " +infinity", " +Infinity",
-                        "       inf", "       Inf",
-                        "      +inf", "      +Inf",
-                        "infinity  ", "Infinity  ",
-                        "+infinity ", "+Infinity ",
-                        "inf       ", "Inf       ",
-                        "+inf      ", "+Inf      " };
-
-  for ( auto& string : infinityStrings ){
+    consumed = false;
     auto begin = string.begin();
     auto end = string.end();
-    auto result = njoy::disco::Real<10>::read<double>(begin, end);
-    REQUIRE( result == std::numeric_limits<double>::infinity() );
-    REQUIRE( end - begin == 0 );
-  }
+    auto result = njoy::disco::Real< 11 >::read< double >( begin, end );
+    consumed = ( end - begin == 0 );
 
-  infinityStrings = { " -infinity", " -Infinity",
-                      " -infinity", " -Infinity",
-                      "      -inf", "      -Inf",
-                      "      -inf", "      -Inf",
-                      "-infinity ", "-Infinity ",
-                      "-infinity ", "-Infinity ",
-                      "-inf      ", "-Inf      ",
-                      "-inf      ", "-Inf      " };
-  for ( auto& string : infinityStrings ){
-    auto begin = string.begin();
-    auto end = string.end();
-    auto result = njoy::disco::Real<10>::read<double>(begin, end);
-    REQUIRE( result == -std::numeric_limits<double>::infinity() );
-    REQUIRE( end - begin == 0 );
-  }
+    return result;
+  };
 
-  GIVEN("A collection of invalid strings"){
-    std::vector< std::string >
-      testset{{"         +"},
-              {"       + 1"},
-              {"   .      "},
-              {"   .inf   "},
-              {"        E3"},
-              {"    .E3   "},
-              {"         E"},
-              {"      1.2E"},
-              {" -123.0a  "},
-              {" -123.0 a "}};
+  GIVEN( "A collection of strings and corresponding double values" ) {
 
-    for ( auto& string : testset ){
-      std::cout << string << std::endl;
+    THEN( "the strings will parse to the corresponding values and the "
+          "strings will be consumed entirely" ) {
+
+      bool consumed = false;
+
+      CHECK(  123.    == Approx( parse( "       +123", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  123.    == Approx( parse( "      123.0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  123.123 == Approx( parse( "    123.123", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK( -123.    == Approx( parse( "       -123", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK( 1E99     == Approx( parse( "       1E99", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK( 1.E99    == Approx( parse( "     1.E+99", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK( 1.E-99   == Approx( parse( "      1E-99", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK( 1.E-99   == Approx( parse( "     1.0-99", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  123.    == Approx( parse( "+123       ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  123.    == Approx( parse( "123.0      ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  123.123 == Approx( parse( "123.123    ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK( -123.    == Approx( parse( "-123       ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK( 1E99     == Approx( parse( "1E99       ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK( 1.E99    == Approx( parse( "1.E+99     ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK( 1.E-99   == Approx( parse( "1E-99      ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK( 1.E-99   == Approx( parse( "1.0-99     ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  123.    == Approx( parse( "  +123     ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  123.    == Approx( parse( "  123.0    ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  123.123 == Approx( parse( " 123.123   ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK( -123.    == Approx( parse( "  -123     ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK( 1E99     == Approx( parse( "    1E99   ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK( 1.E99    == Approx( parse( "  1.E+99   ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK( 1.E-99   == Approx( parse( "   1E-99   ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK( 1.E-99   == Approx( parse( "  1.0-99   ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK( 100.     == Approx( parse( "10.000000+1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK( 100.     == Approx( parse( " 1.000000+2", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+
+      CHECK(    0.    == parse( "          0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "        0E0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       0E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       0E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "        0e0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       0e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       0e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "        0D0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       0D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       0D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "        0d0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       0d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       0d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "        0+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "        0-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "         0.", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       0.E0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      0.E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      0.E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       0.e0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      0.e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      0.e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       0.D0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      0.D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      0.D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       0.d0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      0.d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      0.d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       0.+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       0.-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "        0.0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      0.0E0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     0.0E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     0.0E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      0.0e0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     0.0e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     0.0e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      0.0D0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     0.0D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     0.0D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      0.0d0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     0.0d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     0.0d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      0.0+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      0.0-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "         +0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       +0E0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      +0E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      +0E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       +0e0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      +0e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      +0e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       +0D0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      +0D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      +0D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       +0d0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      +0d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      +0d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       +0+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       +0-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "        +0.", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      +0.E0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     +0.E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     +0.E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      +0.e0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     +0.e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     +0.e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      +0.D0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     +0.D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     +0.D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      +0.d0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     +0.d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     +0.d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      +0.+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      +0.-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       +0.0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     +0.0E0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    +0.0E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    +0.0E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     +0.0e0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    +0.0e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    +0.0e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     +0.0D0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    +0.0D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    +0.0D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     +0.0d0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    +0.0d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    +0.0d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     +0.0+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     +0.0-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "         -0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       -0E0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      -0E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      -0E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       -0e0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      -0e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      -0e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       -0D0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      -0D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      -0D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       -0d0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      -0d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      -0d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       -0+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       -0-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "        -0.", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      -0.E0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     -0.E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     -0.E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      -0.e0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     -0.e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     -0.e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      -0.D0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     -0.D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     -0.D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      -0.d0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     -0.d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     -0.d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      -0.+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      -0.-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       -0.0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     -0.0E0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    -0.0E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    -0.0E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     -0.0e0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    -0.0e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    -0.0e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     -0.0D0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    -0.0D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    -0.0D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     -0.0d0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    -0.0d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    -0.0d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     -0.0+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     -0.0-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "        0E1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       0E+1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "        0e1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       0e+1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "        0D1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       0D+1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "        0d1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       0d+1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "        0+1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       +0E1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      +0E+1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       +0e1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      +0e+1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       +0D1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      +0D+1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       +0d1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      +0d+1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       +0+1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       0E-1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       0e-1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       0D-1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       0d-1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "        0-1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      +0E-1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      +0e-1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      +0D-1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      +0d-1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       +0-1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       -0E1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      -0E+1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       -0e1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      -0e+1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       -0D1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      -0D+1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       -0d1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      -0d+1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       -0+1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      -0E-1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      -0e-1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      -0D-1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      -0d-1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       -0-1", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "           ", consumed ) ); CHECK( true == consumed );
+
+      CHECK(   -0.5   == parse( "        -.5", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "      -.5E0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "     -.5E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "     -.5E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "      -.5e0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "     -.5e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "     -.5e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "      -.5D0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "     -.5D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "     -.5D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "      -.5d0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "     -.5d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "     -.5d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "      -.5+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "      -.5-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "       -0.5", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "     -0.5E0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -0.5E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -0.5E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "     -0.5e0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -0.5e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -0.5e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "     -0.5D0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -0.5D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -0.5D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "     -0.5d0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -0.5d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -0.5d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "      -0.50", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "     -0.5-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "      -0.50", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -0.50E0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "   -0.50E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "   -0.50E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -0.50e0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "   -0.50e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "   -0.50e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -0.50D0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "   -0.50D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "   -0.50D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -0.50d0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "   -0.50d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "   -0.50d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -0.50+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -0.50-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "       -.50", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "     -.50E0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -.50E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -.50E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "     -.50e0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -.50e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -.50e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "     -.50D0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -.50D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -.50D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "     -.50d0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -.50d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -.50d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "     -.50+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "     -.50-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -0.05E1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "   -0.05E+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -0.05e1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "   -0.05e+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -0.05D1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "   -0.05D+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -0.05d1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "   -0.05d+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "    -0.05+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "      -5E-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "      -5e-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "      -5D-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "      -5d-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -0.5   == parse( "       -5-1", consumed ) ); CHECK( true == consumed );
+
+      CHECK(   +0.5   == parse( "         .5", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "       .5E0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      .5E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      .5E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "       .5e0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      .5e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      .5e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "       .5D0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      .5D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      .5D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "       .5d0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      .5d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      .5d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "       .5+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "       .5-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "        0.5", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      0.5E0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     0.5E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     0.5E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      0.5e0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     0.5e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     0.5e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      0.5D0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     0.5D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     0.5D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      0.5d0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     0.5d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     0.5d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "       0.50", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      0.5-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "       0.50", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     0.50E0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    0.50E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    0.50E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     0.50e0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    0.50e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    0.50e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     0.50D0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    0.50D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    0.50D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     0.50d0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    0.50d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    0.50d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     0.50+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     0.50-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "        .50", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      .50E0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     .50E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     .50E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      .50e0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     .50e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     .50e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      .50D0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     .50D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     .50D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      .50d0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     .50d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     .50d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      .50+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      .50-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "        +.5", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      +.5E0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     +.5E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     +.5E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      +.5e0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     +.5e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     +.5e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      +.5D0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     +.5D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     +.5D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      +.5d0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     +.5d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     +.5d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      +.5+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      +.5-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "       +0.5", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     +0.5E0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +0.5E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +0.5E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     +0.5e0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +0.5e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +0.5e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     +0.5D0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +0.5D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +0.5D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     +0.5d0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +0.5d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +0.5d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      +0.50", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     +0.5-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      +0.50", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +0.50E0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "   +0.50E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "   +0.50E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +0.50e0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "   +0.50e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "   +0.50e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +0.50D0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "   +0.50D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "   +0.50D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +0.50d0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "   +0.50d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "   +0.50d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +0.50+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +0.50-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "       +.50", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     +.50E0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +.50E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +.50E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     +.50e0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +.50e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +.50e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     +.50D0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +.50D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +.50D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     +.50d0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +.50d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +.50d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     +.50+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     +.50-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     0.05E1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    0.05E+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     0.05e1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    0.05e+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     0.05D1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    0.05D+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     0.05d1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    0.05d+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "     0.05+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +0.05E1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "   +0.05E+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +0.05e1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "   +0.05e+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +0.05D1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "   +0.05D+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +0.05d1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "   +0.05d+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "    +0.05+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "       5E-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "       5e-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "       5D-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "       5d-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "        5-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      +5E-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      +5e-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      +5D-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "      +5d-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +0.5   == parse( "       +5-1", consumed ) ); CHECK( true == consumed );
+
+      CHECK(   -10.   == parse( "        -10", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "      -10E0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "     -10E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "     -10E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "      -10e0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "     -10e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "     -10e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "      -10D0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "     -10D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "     -10D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "      -10d0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "     -10d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "     -10d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "      -10+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "      -10-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "       -10.", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "     -10.E0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "    -10.E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "    -10.E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "     -10.e0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "    -10.e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "    -10.e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "     -10.D0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "    -10.D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "    -10.D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "     -10.d0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "    -10.d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "    -10.d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "     -10.+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "     -10.-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "      -10.0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "    -10.0E0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "   -10.0E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "   -10.0E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "    -10.0e0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "   -10.0e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "   -10.0e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "    -10.0D0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "   -10.0D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "   -10.0D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "    -10.0d0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "   -10.0d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "   -10.0d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "    -10.0+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "    -10.0-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "       -1E1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "      -1E+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "       -1e1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "      -1e+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "       -1D1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "      -1D+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "       -1d1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "      -1d+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "       -1+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "    -100E-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "    -100e-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "    -100D-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "    -100d-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   -10.   == parse( "     -100-1", consumed ) ); CHECK( true == consumed );
+
+      CHECK(   +10.   == parse( "         10", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "       10E0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      10E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      10E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "       10e0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      10e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      10e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "       10D0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      10D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      10D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "       10d0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      10d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      10d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "       10+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "       10-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "        10.", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      10.E0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     10.E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     10.E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      10.e0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     10.e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     10.e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      10.D0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     10.D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     10.D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      10.d0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     10.d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     10.d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      10.+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      10.-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "       10.0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     10.0E0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    10.0E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    10.0E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     10.0e0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    10.0e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    10.0e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     10.0D0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    10.0D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    10.0D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     10.0d0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    10.0d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    10.0d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     10.0+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     10.0-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "        +10", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      +10E0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     +10E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     +10E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      +10e0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     +10e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     +10e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      +10D0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     +10D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     +10D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      +10d0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     +10d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     +10d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      +10+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      +10-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "       +10.", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     +10.E0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    +10.E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    +10.E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     +10.e0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    +10.e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    +10.e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     +10.D0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    +10.D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    +10.D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     +10.d0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    +10.d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    +10.d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     +10.+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     +10.-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      +10.0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    +10.0E0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "   +10.0E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "   +10.0E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    +10.0e0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "   +10.0e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "   +10.0e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    +10.0D0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "   +10.0D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "   +10.0D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    +10.0d0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "   +10.0d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "   +10.0d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    +10.0+0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    +10.0-0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "        1E1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "       1E+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "        1e1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "       1e+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "        1D1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "       1D+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "        1d1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "       1d+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "        1+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "       +1E1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      +1E+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "       +1e1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      +1e+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "       +1D1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      +1D+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "       +1d1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      +1d+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "       +1+1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     100E-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     100e-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     100D-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     100d-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "      100-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    +100E-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    +100e-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    +100D-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "    +100d-1", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "     +100-1", consumed ) ); CHECK( true == consumed );
+
+      CHECK(  3.14159 == Approx( parse( "    3.14159", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 3.14159   ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( "  3.14159E0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 3.14159E0 ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 3.14159E+0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 3.14159E-0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 3.14159e+0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 3.14159e0 ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 3.14159e-0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( "  3.14159D0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 3.14159D0 ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 3.14159D+0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 3.14159D-0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( "  3.14159d0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 3.14159d0 ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 3.14159d+0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 3.14159d-0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( "  3.14159+0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 3.14159+0 ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( "  3.14159-0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 3.14159-0 ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( "  .314159E1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " .314159E1 ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " .314159E+1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( "  .314159e1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " .314159e1 ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " .314159e+1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( "  .314159D1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " .314159D1 ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " .314159D+1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( "  .314159d1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " .314159d1 ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " .314159d+1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( "  .314159+1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " .314159+1 ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 0.314159E1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 0.314159E1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 0.314159e1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " .314159e+1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 0.314159D1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " .314159D+1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 0.314159d1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " .314159d+1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 0.314159+1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 31.4159E-1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 31.4159e-1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 31.4159D-1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 31.4159d-1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( "  31.4159-1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 31.4159-1 ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( "   +3.14159", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " +3.14159  ", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " +3.14159E0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " +3.14159D0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " +3.14159e0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " +3.14159d0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+
+      CHECK(    0.    == parse( " 0.0    E 0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( " 0.     + 0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "+0.0    E 0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "+0.     + 0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "-0.0    E 0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "-0.     + 0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "        0. ", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      0. E0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     0. E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     0. E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      0. e0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     0. e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     0. e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      0. D0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     0. D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     0. D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      0. d0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     0. d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     0. d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      0. +0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "      0. -0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       +0. ", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     +0. E0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    +0. E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    +0. E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     +0. e0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    +0. e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    +0. e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     +0. D0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    +0. D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    +0. D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     +0. d0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    +0. d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    +0. d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     +0. +0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     +0. -0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "       -0. ", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     -0. E0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    -0. E+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    -0. E-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     -0. e0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    -0. e+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    -0. e-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     -0. D0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    -0. D+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    -0. D-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     -0. d0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    -0. d+0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "    -0. d-0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     -0. +0", consumed ) ); CHECK( true == consumed );
+      CHECK(    0.    == parse( "     -0. -0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "   +10. E 0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "  +10. E+ 0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "  +10. E- 0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "   +10. e 0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "  +10. e+ 0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "  +10. e- 0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "   +10. D 0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "  +10. D+ 0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "  +10. D- 0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "   +10. d 0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "  +10. d+ 0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "  +10. d- 0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "   +10. + 0", consumed ) ); CHECK( true == consumed );
+      CHECK(   +10.   == parse( "   +10. - 0", consumed ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 31.4159 -1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( "31.4159 - 1", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 3.14159 +0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( "3.14159 + 0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 3.14159 E0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( "3.14159 E 0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 3.14159 e0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( "3.14159 e 0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 3.14159 D0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( "3.14159 D 0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( " 3.14159 d0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+      CHECK(  3.14159 == Approx( parse( "3.14159 d 0", consumed ) ).epsilon( eps ) ); CHECK( true == consumed );
+    } // THEN
+  } // GIVEN
+
+  GIVEN( "a blank string" ) {
+
+    THEN( "the string will be parsed to zero and the string will be consumed "
+          "entirely" ) {
+
+      bool consumed = false;
+
+      CHECK( 0. == parse( "           ", consumed ) ); CHECK( true == consumed );
+    } // THEN
+  } // GIVEN
+
+  GIVEN( "A collection of strings representing infinity" ) {
+
+    THEN( "the strings will parse to the corresponding infinite value and the "
+          "strings will be consumed entirely" ) {
+
+      bool consumed = false;
+      auto inf = std::numeric_limits< double >::infinity();
+
+      CHECK(   inf == parse( "   infinity", consumed ) ); CHECK( true == consumed );
+      CHECK(   inf == parse( "   Infinity", consumed ) ); CHECK( true == consumed );
+      CHECK(   inf == parse( "  +infinity", consumed ) ); CHECK( true == consumed );
+      CHECK(   inf == parse( "  +Infinity", consumed ) ); CHECK( true == consumed );
+      CHECK(   inf == parse( "        inf", consumed ) ); CHECK( true == consumed );
+      CHECK(   inf == parse( "        Inf", consumed ) ); CHECK( true == consumed );
+      CHECK(   inf == parse( "       +inf", consumed ) ); CHECK( true == consumed );
+      CHECK(   inf == parse( "       +Inf", consumed ) ); CHECK( true == consumed );
+      CHECK(   inf == parse( "infinity   ", consumed ) ); CHECK( true == consumed );
+      CHECK(   inf == parse( "Infinity   ", consumed ) ); CHECK( true == consumed );
+      CHECK(   inf == parse( "+infinity  ", consumed ) ); CHECK( true == consumed );
+      CHECK(   inf == parse( "+Infinity  ", consumed ) ); CHECK( true == consumed );
+      CHECK(   inf == parse( "inf        ", consumed ) ); CHECK( true == consumed );
+      CHECK(   inf == parse( "Inf        ", consumed ) ); CHECK( true == consumed );
+      CHECK(   inf == parse( "+inf       ", consumed ) ); CHECK( true == consumed );
+      CHECK(   inf == parse( "+Inf       ", consumed ) ); CHECK( true == consumed );
+      CHECK(  -inf == parse( "  -infinity", consumed ) ); CHECK( true == consumed );
+      CHECK(  -inf == parse( "  -Infinity", consumed ) ); CHECK( true == consumed );
+      CHECK(  -inf == parse( "  -infinity", consumed ) ); CHECK( true == consumed );
+      CHECK(  -inf == parse( "  -Infinity", consumed ) ); CHECK( true == consumed );
+      CHECK(  -inf == parse( "       -inf", consumed ) ); CHECK( true == consumed );
+      CHECK(  -inf == parse( "       -Inf", consumed ) ); CHECK( true == consumed );
+      CHECK(  -inf == parse( "       -inf", consumed ) ); CHECK( true == consumed );
+      CHECK(  -inf == parse( "       -Inf", consumed ) ); CHECK( true == consumed );
+      CHECK(  -inf == parse( "-infinity  ", consumed ) ); CHECK( true == consumed );
+      CHECK(  -inf == parse( "-Infinity  ", consumed ) ); CHECK( true == consumed );
+      CHECK(  -inf == parse( "-infinity  ", consumed ) ); CHECK( true == consumed );
+      CHECK(  -inf == parse( "-Infinity  ", consumed ) ); CHECK( true == consumed );
+      CHECK(  -inf == parse( "-inf       ", consumed ) ); CHECK( true == consumed );
+      CHECK(  -inf == parse( "-Inf       ", consumed ) ); CHECK( true == consumed );
+      CHECK(  -inf == parse( "-inf       ", consumed ) ); CHECK( true == consumed );
+      CHECK(  -inf == parse( "-Inf       ", consumed ) ); CHECK( true == consumed );
+    } // THEN
+  } // GIVEN
+
+  GIVEN( "A collection of invalid strings" ) {
+
+    THEN( "an exception is thrown" ) {
+
+      bool consumed = false;
+
+      CHECK_THROWS( parse( "          +", consumed ) );
+      CHECK_THROWS( parse( "        + 1", consumed ) );
+      CHECK_THROWS( parse( "    .      ", consumed ) );
+      CHECK_THROWS( parse( "    .inf   ", consumed ) );
+      CHECK_THROWS( parse( "         E3", consumed ) );
+      CHECK_THROWS( parse( "     .E3   ", consumed ) );
+      CHECK_THROWS( parse( "          E", consumed ) );
+      CHECK_THROWS( parse( "       1.2E", consumed ) );
+      CHECK_THROWS( parse( "         E ", consumed ) );
+      CHECK_THROWS( parse( "      1.2E ", consumed ) );
+      CHECK_THROWS( parse( "     1.2 E ", consumed ) );
+      CHECK_THROWS( parse( "  -123.0a  ", consumed ) );
+      CHECK_THROWS( parse( "  -123.0 a ", consumed ) );
+    } // THEN
+  } // GIVEN
+
+  GIVEN( "a strings truncated with newline or EOF characters" ) {
+
+    THEN( "the strings will parse to the corresponding values and the "
+          "strings will be consumed up to the last character" ) {
+
+      std::string string = "";
       auto begin = string.begin();
       auto end = string.end();
-      REQUIRE_THROWS( njoy::disco::Real<10>::read<double>(begin, end) );
-    }
-  }
-}
+
+      string = "   10  \n";
+      begin = string.begin();
+      end = string.end();
+      CHECK( 10. == njoy::disco::Real< 10 >::read< double >( begin, end ) );
+      CHECK( 1 == end - begin );
+      CHECK( string.back() == *begin );
+
+      string = "   10  ";
+      string += char{ std::char_traits< char >::eof() };
+      begin = string.begin();
+      end = string.end();
+      CHECK( 10. == njoy::disco::Real< 10 >::read< double >( begin, end ) );
+      CHECK( 1 == end - begin );
+      CHECK( string.back() == *begin );
+    } // THEN
+  } // GIVEN
+} // SCENARIO

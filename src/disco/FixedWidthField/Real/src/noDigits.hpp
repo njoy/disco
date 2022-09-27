@@ -1,6 +1,7 @@
 template< typename UnsignedInteger >
 static uint16_t
-noDigits( UnsignedInteger mantissa ){
+noDigits( UnsignedInteger mantissa ) {
+  
   if ( mantissa < 10ull ){ return 1; };
   if ( mantissa < 100ull ){ return 2; };
   if ( mantissa < 1000ull ){ return 3; };
