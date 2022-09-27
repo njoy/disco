@@ -41,13 +41,6 @@ read( Iterator& it, const Iterator& ) {
       fractionSuccess
       * ( position - decimalPosition - (position != width - 1) );
 
-    if ( position == width ) {
-
-      const auto factor =
-        realExponentiation< Representation >::cache( -numberFractionDigits );
-      return sign * ( base + fraction * Representation(factor) );
-    }
-
     if ( unlikely( not baseSuccess && not fractionSuccess ) ) {
 
       const bool succeeded =
@@ -60,8 +53,19 @@ read( Iterator& it, const Iterator& ) {
       return sign * std::numeric_limits< Representation >::infinity();
     }
 
-    // removing trailing white space between the fraction and exponent
-    position += FixedWidthField_::whiteSpace( it );
+    // read over possible trailing white space between the fraction and exponent
+    while( FixedWidthField_::isSpace( *it ) and position < w ) {
+
+      ++position;
+      ++it;
+    }
+
+    if ( position == width ) {
+
+      const auto factor =
+        realExponentiation< Representation >::cache( -numberFractionDigits );
+      return sign * ( base + fraction * Representation(factor) );
+    }
 
     const auto exponent =
       Real::parseExponent( it, position ) - numberFractionDigits;
