@@ -12,9 +12,6 @@ struct Real : public FixedWidthField< w >{
   /* constants */
   static constexpr uint16_t width = w;
 
-  /* convenience typedefs */
-  using FixedWidthField_ = FixedWidthField< w >;
-
   template< typename Iterator >
   static void write( Iterator& it ){ ColumnPosition< w >::write( it ); }
 

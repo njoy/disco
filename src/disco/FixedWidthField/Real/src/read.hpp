@@ -2,9 +2,9 @@ template< typename Representation, typename Iterator, bool trust = true >
 static Representation
 read( Iterator& it, const Iterator& ) {
 
-  auto position = FixedWidthField_::whiteSpace( it );
+  auto position = FixedWidthField< w >::whiteSpace( it );
 
-  if( FixedWidthField_::isNewline(*it, it) or FixedWidthField_::isEOF(*it) ) {
+  if( FixedWidthField< w >::isNewline(*it, it) or FixedWidthField< w >::isEOF(*it) ) {
 
     return Representation(0.0);
   }
@@ -54,7 +54,7 @@ read( Iterator& it, const Iterator& ) {
     }
 
     // read over possible trailing white space between the fraction and exponent
-    while( FixedWidthField_::isSpace( *it ) and position < w ) {
+    while( FixedWidthField< w >::isSpace( *it ) and position < w ) {
 
       ++position;
       ++it;
@@ -89,7 +89,7 @@ read( Iterator& it, const Iterator& ) {
      * realExponentiation< Representation >::cache( exponent );
   }();
 
-  if ( unlikely( not FixedWidthField_::whiteSpace(it, position) ) ) {
+  if ( unlikely( not FixedWidthField< w >::whiteSpace(it, position) ) ) {
 
     throw std::runtime_error("cannot parse invalid real number");
   }
@@ -101,5 +101,5 @@ template< typename Iterator, bool trust = true >
 static double
 read( Iterator& it, const Iterator& end ) {
 
-  return read<double>( it, end );
+  return read< double >( it, end );
 }
